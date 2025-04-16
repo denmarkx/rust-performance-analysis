@@ -6,7 +6,7 @@ use rand::prelude::*;
 include!{"../../random_value.rs"}
 
 fn main() {
-    const ARRAY_SIZE : i32 = 5;
+    const ARRAY_SIZE : usize = 5;
     let mut array = randomize_array(1, 5, ARRAY_SIZE);
 
     // Start with 2nd item:

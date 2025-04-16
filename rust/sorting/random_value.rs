@@ -1,5 +1,5 @@
 // Places random values between a, b for len c.
-fn randomize_array(a : u32, b : u32, c : i32) -> Vec<u32> {
+fn randomize_array(a : u32, b : u32, c : usize) -> Vec<u32> {
     let mut rng;
 
     // Create array:

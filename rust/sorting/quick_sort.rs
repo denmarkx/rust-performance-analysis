@@ -1,15 +1,16 @@
 // rand = "0.9"
 
+use std::time::Instant;
 use rand::prelude::*;
 
 // for the use of cargo-single we have to traverse backwards.
 include!{"../../random_value.rs"}
 
-fn partition(array: &mut[u32]) -> usize {
-    let pivot = array.len()-1;
-    let mut i = 0;
+fn partition(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
+    let pivot = high;
+    let mut i = low;
 
-    for j in 0..pivot {
+    for j in low..pivot-1 {
         if array[j] <= array[pivot] {
             array.swap(j, i);
             i+=1;
@@ -19,19 +20,23 @@ fn partition(array: &mut[u32]) -> usize {
     i
 }
 
-fn sort(array: &mut[u32]) {
-    if array.len() <= 1 {
+fn sort(array: &mut Vec<u32>, low: usize, high: usize) {
+    if low >= high {
         return;
     }
-    let pivot = partition(array);
-    sort(&mut array[..pivot]);
-    sort(&mut array[pivot+1..]);
+    let pivot = partition(array, low, high);
+    sort(array, low, pivot-1);
+    sort(array, pivot+1, high);
 }
 
 fn main() {
-    const ARRAY_SIZE : i32 = 5;
+    const ARRAY_SIZE : usize = 52025;
     let mut array = randomize_array(1, 5, ARRAY_SIZE);
 
-    sort(&mut array[..]);
-    dbg!(array);
+    let now = Instant::now();
+
+    sort(&mut array, 1, ARRAY_SIZE-1);
+
+    let elapsed = now.elapsed();
+    println!("Time Elapsed: {:.6?}", elapsed);
 }
