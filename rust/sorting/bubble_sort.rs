@@ -1,0 +1,27 @@
+// rand = "0.9"
+
+use std::time::Instant;
+use rand::prelude::*;
+
+// for the use of cargo-single we have to traverse backwards.
+include!{"../../random_value.rs"}
+
+fn main() {
+    const ARRAY_SIZE : usize = 5;
+    let mut array = randomize_array(1, 5, ARRAY_SIZE);
+
+    let now = Instant::now();
+
+    // Bubble Sort Implementation:
+    for _i in 0..array.len() {
+        for j in 0..array.len()-1 {
+            if array[j] > array[j+1] {
+                // swap:
+                array.swap(j, j+1);
+            }
+        }
+    }
+
+    let elapsed = now.elapsed();
+    println!("Time Elapsed: {:.6?}", elapsed);
+}
