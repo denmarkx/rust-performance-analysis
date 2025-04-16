@@ -50,18 +50,26 @@ void sort(int* array, int low, int high) {
     sort(array, pivot+1, high);
 }
 
+void start_quick_sort(int* array, const size_t array_size) {
+    benchmark();
+    sort(array, 0, array_size-1);
+    end_benchmark();
+}
+
 int main(int argc, char* argv[]) {
     warn_arguments(argc, argv);
+    setup_benchmark(atoi(argv[3]));
 
     const size_t array_size = atoi(argv[2]);
 
     // Quick Sort implementation:
     int* array = random_value(0, atoi(argv[1]), array_size);
 
-    benchmark();
-    sort(array, 0, array_size-1);
-    end_benchmark();
+    for (int i = 0; i < atoi(argv[3]); i++) {
+        start_quick_sort(array, array_size-1);
+    }
 
+    complete_benchmark();
     free(array);
     return 0;
 }
