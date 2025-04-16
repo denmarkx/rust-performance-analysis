@@ -2,12 +2,15 @@
 
 #include "random_value.c"
 #include "benchmark.c"
+#include "util.c"
 
-int main() {
-    const int array_size = 5;
+int main(int argc, char* argv[]) {
+    warn_arguments(argc, argv);
+
+    const int array_size = atoi(argv[2]);
 
     // Insertion Sort implementation:
-    int* array = random_value(0, 10, array_size);
+    int* array = random_value(0, atoi(argv[1]), array_size);
 
     // Start at the 2nd item (i=0)
     benchmark();

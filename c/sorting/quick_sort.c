@@ -1,6 +1,8 @@
 #include <stdio.h>
-#include "../random_value.c"
-#include "../benchmark.c"
+
+#include "random_value.c"
+#include "benchmark.c"
+#include "util.c"
 
 /*
 * Given references to x and y, swaps them in-place.
@@ -48,11 +50,13 @@ void sort(int* array, int low, int high) {
     sort(array, pivot+1, high);
 }
 
-int main() {
-    const size_t array_size = 5;
+int main(int argc, char* argv[]) {
+    warn_arguments(argc, argv);
+
+    const size_t array_size = atoi(argv[2]);
 
     // Quick Sort implementation:
-    int* array = random_value(0, 15, array_size);
+    int* array = random_value(0, atoi(argv[1]), array_size);
 
     benchmark();
     sort(array, 0, array_size-1);

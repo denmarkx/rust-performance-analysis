@@ -4,11 +4,13 @@
 #include "benchmark.c"
 #include "util.c"
 
-int main() {
-    const int array_size = 5;
+int main(int argc, char* argv[]) {
+    warn_arguments(argc, argv);
+
+    const int array_size = atoi(argv[2]);
 
     // Bubble Sort implementation:
-    int* array = random_value(0, 210, array_size);
+    int* array = random_value(0, atoi(argv[1]), array_size);
 
     benchmark();
     for (int i = 0; i < array_size; i++) {
