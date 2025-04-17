@@ -7,9 +7,9 @@ use std::env;
 // from safe -> unsafe Rust.
 
 // Utilizes all three wrapping_* functions:
-// https://doc.rust-lang.org/std/intrinsics/fn.wrapping_mul.html
-// https://doc.rust-lang.org/std/intrinsics/fn.wrapping_sub.html
-// https://doc.rust-lang.org/std/intrinsics/fn.wrapping_add.html
+// https://doc.rust-lang.org/std/primitive.u32.html#method.wrapping_mul
+// https://doc.rust-lang.org/std/primitive.u32.html#method.wrapping_sub
+// https://doc.rust-lang.org/std/primitive.u32.html#method.wrapping_add
 
 // Despite these specific instriniscs not actually
 // requiring unsafe, the actual isolated incident is 
@@ -31,46 +31,124 @@ fn main() {
 
     let array = randomize_array(1, random_max, array_size);
 
-    println!("\nw_mul_implicit:");
-    benchmark(benchmark_count, || w_mul_implicit(&array));
-    println!("\nw_mul_unsafe_implicit:");
-    benchmark(benchmark_count, || w_mul_unsafe_implicit(&array));
-    println!("\nw_mul:");
-    benchmark(benchmark_count, || w_mul(&array, 0, array_size));
-    println!("\nw_mul_unsafe:");
-    benchmark(benchmark_count, || w_mul_unsafe(&array, 0, array_size));
+    // t_wrapping_mul:
+    println!("\nw_func_implicit: [MUL]");
+    benchmark(benchmark_count, || w_func_implicit(&array, t_wrapping_mul));
+
+    println!("\nw_func_unsafe_implicit: [MUL]:");
+    benchmark(benchmark_count, || w_func_unsafe_implicit(&array, t_wrapping_mul));
+
+    println!("\nw_func: [MUL]:");
+    benchmark(benchmark_count, || w_func(&array, 0, array_size, t_wrapping_mul));
+
+    println!("\nw_func_unsafe: [MUL]:");
+    benchmark(benchmark_count, || w_func_unsafe(&array, 0, array_size, t_wrapping_mul));
+
+    println!("======================================");
+
+    // t_wrapping_add:
+    println!("\nw_func_implicit: [MUL]");
+    benchmark(benchmark_count, || w_func_implicit(&array, t_wrapping_add));
+
+    println!("\nw_func_unsafe_implicit: [MUL]:");
+    benchmark(benchmark_count, || w_func_unsafe_implicit(&array, t_wrapping_add));
+
+    println!("\nw_func: [MUL]:");
+    benchmark(benchmark_count, || w_func(&array, 0, array_size, t_wrapping_add));
+
+    println!("\nw_func_unsafe: [MUL]:");
+    benchmark(benchmark_count, || w_func_unsafe(&array, 0, array_size, t_wrapping_add));
+
+    println!("======================================");
+
+    // t_wrapping_sub:
+    println!("\nw_func_implicit: [MUL]");
+    benchmark(benchmark_count, || w_func_implicit(&array, t_wrapping_sub));
+
+    println!("\nw_func_unsafe_implicit: [MUL]:");
+    benchmark(benchmark_count, || w_func_unsafe_implicit(&array, t_wrapping_sub));
+
+    println!("\nw_func: [MUL]:");
+    benchmark(benchmark_count, || w_func(&array, 0, array_size, t_wrapping_sub));
+
+    println!("\nw_func_unsafe: [MUL]:");
+    benchmark(benchmark_count, || w_func_unsafe(&array, 0, array_size, t_wrapping_sub));
+
 }
 
-fn w_mul_implicit(ar: &[u32]) {
+/*
+* Equivalent to n.wrapping_mul(x);
+*/
+#[inline]
+fn t_wrapping_mul(n: &u32, x: &u32) -> u32 {
+    n.wrapping_mul(*x)
+}
+
+/*
+* Equivalent to n.wrapping_add(x);
+*/
+#[inline]
+fn t_wrapping_add(n: &u32, x: &u32) -> u32 {
+    n.wrapping_add(*x)
+}
+
+/*
+* Equivalent to n.wrapping_sub(x);
+*/
+#[inline]
+fn t_wrapping_sub(n: &u32, x: &u32) -> u32 {
+    n.wrapping_sub(*x)
+}
+
+/*
+*
+* Retrieves index in function.
+* w_func_implicit
+* w_func_unsafe_implicit
+*
+*
+*/
+fn w_func_implicit(ar: &[u32], f: fn(&u32, &u32) -> u32) -> u32 {
     let mut n: u32 = 0;
     for i in 0..ar.len() {
         let x = ar[i];
-        n = n.wrapping_mul(x);
+        n = f(&n, &x)
     }
+    n
 }
 
-
-fn w_mul_unsafe_implicit(ar: &[u32]) {
+fn w_func_unsafe_implicit(ar: &[u32], f: fn(&u32, &u32) -> u32) -> u32 {
     let mut n : u32 = 0;
     for i in 0..ar.len() {
         let x = unsafe { *ar.get_unchecked(i) };
-        n = n.wrapping_mul(x);
+        n = f(&n, &x);
     }
+    n
 }
 
 
-fn w_mul(ar: &[u32], min : usize, max : usize) {
+/*
+*
+* Expects lower and upper array bounds in call.
+* w_func
+* w_func_unsafe
+*
+*
+*/
+fn w_func(ar: &[u32], min : usize, max: usize, f: fn(&u32, &u32) -> u32) -> u32 {
     let mut n: u32 = 0;
     for i in min..max {
         let x = ar[i];
-        n = n.wrapping_mul(x);
+        n = f(&n, &x);
     }
+    n
 }
 
-fn w_mul_unsafe(ar: &[u32], min : usize, max : usize) {
+fn w_func_unsafe(ar: &[u32], min : usize, max: usize, f: fn(&u32, &u32) -> u32) -> u32 {
     let mut n : u32 = 0;
     for i in min..max {
         let x = unsafe { *ar.get_unchecked(i) };
-        n = n.wrapping_mul(x);
+        n = f(&n, &x);
     }
+    n
 }
