@@ -1,6 +1,8 @@
 use std::time::Instant;
 use std::time::Duration;
 
+const AVERAGE_ONLY : bool = true;
+
 /*
 * Given a function and <n> for number of benchmarks,
 * runs the given function n times and records the time
@@ -15,7 +17,9 @@ fn benchmark<F: FnMut() -> T, T>(n : usize, mut f: F) {
         let now = Instant::now();
         f();
         t.push(now.elapsed()*1000);
-        println!("[{:?}] Time Elapsed: {:.2?}", i+1, now.elapsed()*1000);
+        if !AVERAGE_ONLY {
+            println!("[{:?}] Time Elapsed: {:.2?}", i+1, now.elapsed()*1000);
+        }
     }
 
     // Average time:

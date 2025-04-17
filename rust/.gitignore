@@ -1,3 +1,4 @@
 # Rust build directories
 sorting/*/
 sorting_unsafe/*/
+isolated_example/*/
