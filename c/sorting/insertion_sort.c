@@ -26,17 +26,27 @@ int main(int argc, char* argv[]) {
     warn_arguments(argc, argv);
     setup_benchmark(atoi(argv[3]));
 
-    const int array_size = atoi(argv[2]);
-
     // Insertion Sort implementation:
-    int* array = random_value(0, atoi(argv[1]), array_size);
+    int array_size;
+    int* array = NULL;
+    ArrayData arr_data;
 
-    for (int i = 0; i < atoi(argv[3]); i++) {
-        insertion_sort(array, array_size);
+    if (use_random_values(argv[1])) {
+        array_size = atoi(argv[2]);
+        // array = random_value(0, atoi(argv[1]), array_size);
+    } else {
+        arr_data = read_from_file("../test/insertion_sort.txt");
+
+        // Traverse:
+        for (int i = 0; i < arr_data.arr_size; i++) {
+            array_size = arr_data.count_arr[i]-1;
+            array = &arr_data.array[i];
+            insertion_sort(array, array_size);
+        }
     }
 
     // Cleanup:
-    free(array);
+    cleanup_array_data(arr_data);
     complete_benchmark();
     return 0;
 }
