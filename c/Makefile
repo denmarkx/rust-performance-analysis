@@ -9,8 +9,12 @@ insertion_sort: sorting/insertion_sort.c
 bubble_sort: sorting/bubble_sort.c
 	gcc $(CFLAGS) -o bubble_sort sorting/bubble_sort.c -I.
 
+matrix_mult: math/matrix_mult.c
+	gcc $(CFLAGS) -o matrix_mult math/matrix_mult.c -I.
+
+math: matrix_mult
 sorting: insertion_sort quick_sort bubble_sort
-all: sorting
+all: sorting math
 
 clean:
 	del *.exe

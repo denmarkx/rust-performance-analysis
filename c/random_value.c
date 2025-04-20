@@ -19,11 +19,11 @@ int* random_value(int a, int b, int c) {
 
 /*
 * Returns ArrayData of random_value arrays.
-* random_value range is [a, b] with a length of random [b/2, b].
+* random_value range is [a, b] with a length of random [b/2, b] if rand_length=1
 * the number of iterations within arrayData's array is c.
 */
 
-ArrayData random_value_set(int a, int b, int c) {
+ArrayData random_value_set(int a, int b, int c, int rand_length) {
     ArrayData data;
     data.arr_size = c;
 
@@ -33,7 +33,10 @@ ArrayData random_value_set(int a, int b, int c) {
     int* count_arr = malloc(c * sizeof(int));
     for (int i = 0; i < c; i++) {
         // Random length:
-        length = rand() % (b + 1 - (b/2)) + (b/2);
+        length = rand_length;
+        if (rand_length == 1) {
+            length = rand() % (b + 1 - (b/2)) + (b/2);
+        }
         count_arr[i] = length;
     }
 

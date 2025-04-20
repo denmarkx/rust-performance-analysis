@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 
     if (use_random_values(argv[1])) {
         // array = random_value(0, atoi(argv[1]), array_size);
-        arr_data = random_value_set(0, atoi(argv[1]), atoi(argv[2]));
+        arr_data = random_value_set(0, atoi(argv[1]), atoi(argv[2]), 1);
     } else {
         arr_data = read_from_file("../test/insertion_sort.txt");
     }
