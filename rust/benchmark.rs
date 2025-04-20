@@ -16,9 +16,9 @@ fn benchmark<F: FnMut() -> T, T>(n : usize, mut f: F) {
     for i in 0..n {
         let now = Instant::now();
         f();
-        t.push(now.elapsed()*1000);
+        t.push(now.elapsed());
         if !AVERAGE_ONLY {
-            println!("[{:?}] Time Elapsed: {:.2?}", i+1, now.elapsed()*1000);
+            println!("[{:?}] Time Elapsed: {:.2?}", i+1, now.elapsed());
         }
     }
 
