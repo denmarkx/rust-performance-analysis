@@ -68,5 +68,8 @@ static inline void complete_benchmark() {
     }
     average /= benchmark_count;
     printf("Average Time: %f\n", average);
-    free(benchmark_totals);
+
+    if (benchmark_totals != NULL) {
+        free(benchmark_totals);
+    }
 }

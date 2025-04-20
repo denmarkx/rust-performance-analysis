@@ -46,10 +46,6 @@ ArrayData random_value_set(int a, int b, int c) {
         // Get length:
         sub_array = random_value(a, b, count_arr[i]);
         array[i] = sub_array;
-        int* test = array[i];
-        // for (int j = 0; j < count_arr[i]; j++) {
-            // printf("array[j]=%d\n", test[j]);
-        // }
     }
 
     data.array = array;

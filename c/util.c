@@ -10,14 +10,14 @@ void print_array(int* array, size_t size) {
 }
 
 typedef struct ArrayData {
-    int* array; // Contains [[...], [...]] where inner arrays are of arbitrary size.
+    int** array; // Contains [[...], [...]] where inner arrays are of arbitrary size.
     int* count_arr; // The length of each inner child array of above ptr array.
     int arr_size; // size of array and count_arr ptr.
 } ArrayData;
 
 ArrayData read_from_file(char* file_name) {
     FILE* file = fopen(file_name, "r");
-    int* array, *child_array, *count_arr = NULL;
+    int** array, *child_array, *count_arr = NULL;
     char* n_token, *token;
     char line[256];
 
@@ -31,7 +31,7 @@ ArrayData read_from_file(char* file_name) {
         while (fgets(line, sizeof(line), file)) {
             line_count++;
         }
-        array = malloc(line_count * sizeof(int*));
+        array = malloc(line_count * sizeof(*array));
         count_arr = malloc(line_count * sizeof(int));
         rewind(file);
 
@@ -56,7 +56,7 @@ ArrayData read_from_file(char* file_name) {
             }
 
             // Add array:
-            array[i] = *child_array;
+            array[i] = child_array;
             i++;
         }
         fclose(file);
@@ -76,9 +76,9 @@ ArrayData read_from_file(char* file_name) {
 
 void cleanup_array_data(ArrayData arr_data) {
     for (int i = 0; i < arr_data.arr_size; i++) {
-        free(&arr_data.array[i]);
+        free(arr_data.array[i]);
     }
-    // free(arr_data.array);
+    free(arr_data.array);
     free(arr_data.count_arr);
 }
 
@@ -89,7 +89,7 @@ int use_random_values(char* argv) {
     if (argv == NULL) {
         return 1;
     }
-    return strcmp(argv, "-f") == 1;
+    return strcmp(argv, "-f") != 0;
 }
 
 /*
