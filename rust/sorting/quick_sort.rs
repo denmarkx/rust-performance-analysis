@@ -1,10 +1,11 @@
 // rand = "0.9"
+// lazy_static = "1.5.0"
 
 use rand::prelude::*;
 use std::env;
 
 // for the use of cargo-single we have to traverse backwards.
-include!{"../../random_value.rs"}
+include!{"../../../random_value.rs"}
 include!{"../../../benchmark.rs"}
 include!{"../../../util.rs"}
 

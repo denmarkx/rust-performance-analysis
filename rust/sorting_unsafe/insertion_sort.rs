@@ -48,6 +48,4 @@ fn main() {
         t_insertion_sort(arr_data);
     }
     complete_benchmark();
-
-    // benchmark(args[3].parse::<usize>().unwrap(), || insertion_sort(&mut array));
 }

@@ -4,7 +4,7 @@ use rand::prelude::*;
 use std::env;
 
 // for the use of cargo-single we have to traverse backwards.
-include!{"../../random_value.rs"}
+include!{"../../../random_value.rs"}
 include!{"../../../benchmark.rs"}
 include!{"../../../util.rs"}
 
