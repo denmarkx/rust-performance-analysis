@@ -15,11 +15,53 @@ typedef struct ArrayData {
     int arr_size; // size of array and count_arr ptr.
 } ArrayData;
 
+// Similar to POSIX getline()
+ssize_t read_line(char** lineptr, size_t* n, FILE* stream) {
+    int c;
+    size_t len = 0;
+
+    // allocate for lineptr
+    if (*lineptr == NULL || *n == 0) {
+        *n = 128;  // Initial buffer size
+        *lineptr = malloc(*n);
+        if (*lineptr == NULL) return -1;
+    }
+
+    // read by character
+    while ((c = fgetc(stream)) != EOF) {
+        // quick buffer expansion. we'll actually double the size.
+        if (len + 1 >= *n) {
+            *n *= 2;
+            char* temp = realloc(*lineptr, *n);
+            if (!temp) {
+                return -1;
+            }
+            *lineptr = temp;
+        }
+
+        // store and inc
+        (*lineptr)[len++] = (char)c;
+
+        // line end.
+        if (c == '\n') {
+            break;
+        }
+    }
+
+    if (len == 0 && c == EOF) {
+        return -1;
+    }
+
+    (*lineptr)[len] = '\0';
+    return (ssize_t)len;
+}
+
 ArrayData read_from_file(char* file_name) {
     FILE* file = fopen(file_name, "r");
     int** array, *child_array, *count_arr = NULL;
     char* n_token, *token;
-    char line[256];
+    char* line = NULL;
+    size_t len = 0;
 
     // optimization or compiler screws this if its all in one line. zzz
     int line_count=0;
@@ -28,16 +70,16 @@ ArrayData read_from_file(char* file_name) {
 
     // read line by line:
     if (file != NULL) {
-        while (fgets(line, sizeof(line), file)) {
+        while (read_line(&line, &len, file) != -1) {
             line_count++;
         }
         array = malloc(line_count * sizeof(*array));
         count_arr = malloc(line_count * sizeof(int));
         rewind(file);
 
-        while (fgets(line, sizeof(line), file)) {
+        while (read_line(&line, &len, file) != -1) {
             // Delimited by a space:
-            token = strtok_s(line, " ", &n_token);
+            token = strtok_s(line, " \n", &n_token);
 
             // First token is the array size:
             child_array = malloc(atoi(token) * sizeof(int));
@@ -47,8 +89,8 @@ ArrayData read_from_file(char* file_name) {
 
             // Reset j:
             j = 0;
-            while (token != NULL) {
-                token = strtok_s(NULL, " ", &n_token);
+            while (token != NULL && j < count_arr[i]) {
+                token = strtok_s(NULL, " \n", &n_token);
                 
                 // Subsequent are just items of the child array.
                 child_array[j] = atoi(token);
@@ -60,6 +102,7 @@ ArrayData read_from_file(char* file_name) {
             i++;
         }
         fclose(file);
+        free(line);
     }
     else {
         fprintf(stderr, "Unable to open file\n");
@@ -96,37 +139,23 @@ int use_random_values(char* argv) {
 * Currently only used for sorting programs.
 * If no arguments are supplied, it'll write the 1st and 2nd index of argv in-place.
 * Stops and warns if arguments are illegal.
+*
 */
 void warn_arguments(int argc, char* argv[]) {
-    // One argument is fine, we'll just pick something on our own.
-    if (argc == 1) {
-        if (use_random_values(argv[1])) {
-            argv[1] = "5"; // [0-5]
-            argv[2] = "5"; // 5 iterations.
-            argv[3] = "1"; // Only benchmarks once.
-            return;
-        }
-        // use supplied ./prog -f
-        return;
-    }
-
-    // Default benchmark count is once for none given.
-    // For the sake of keeping the setup actually dedicated to most of benchmark.c
-    // we let benchmark.c::setup_benchmark make the determination for us.
+    // One(argc==2) argument is ONLY allowed if we're doing this via file mode.
     if (argc == 2) {
-        argv[3] = "1";
+        // Otherwise, it's not allowed.
+        if (use_random_values(argv[1])) {
+            printf("Usages:\n./program <random_value_max> <iteration_count>.\n./program -f\n");
+            exit(1);        
+        }
         return;
     }
 
-    // Though the sorting programs will require a max random value and iteration count.
-    if (argc < 3) {
-        printf("Incorrect usage: ./program <random_value> <iteration_count>.\n");
+    // Only other acceptable args is 3.
+    if (argc != 3) {
+        printf("Usages:\n./program <random_value_max> <iteration_count>.\n./program -f\n");
         exit(1);
-    }
-
-    // Number of times we want to benchmark.
-    if (argc > 4) {
-        printf("Incorrect usage: ./program <random_value> <iteration_count> <benchmark_count>.\n");
-        exit(1);
+        return;
     }
 }
