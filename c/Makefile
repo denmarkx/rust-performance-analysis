@@ -1,4 +1,4 @@
-CFLAGS = -O3 -g
+CFLAGS = -O3
 
 quick_sort: sorting/quick_sort.c
 	gcc $(CFLAGS) -o quick_sort sorting/quick_sort.c -I.
