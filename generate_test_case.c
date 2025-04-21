@@ -4,8 +4,8 @@
 
 #define FILE_NAME "test/bubble_sort.txt"
 #define RANDOM_MIN 1
-#define RANDOM_MAX 10000
-#define NUM_ITERATIONS 1000000
+#define RANDOM_MAX 100000
+#define NUM_ITERATIONS 100
 
 int main() {
     FILE *file;
