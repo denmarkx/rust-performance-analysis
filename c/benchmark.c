@@ -1,12 +1,21 @@
 #include <windows.h>
+#include <winnt.h>
 
 // XXX: this'll obviously break when using on osx
 
+static LARGE_INTEGER f;
 double get_time() {
-    LARGE_INTEGER t, f;
+    static int FREQ_INITIALIZED = 0;
+
+    // cache the frequency
+    if (!FREQ_INITIALIZED) {
+        QueryPerformanceFrequency(&f);
+        FREQ_INITIALIZED = 1;
+    }
+
+    LARGE_INTEGER t;
     QueryPerformanceCounter(&t);
-    QueryPerformanceFrequency(&f);
-    return (double)t.QuadPart / (double)f.QuadPart;
+    return (double)t.QuadPart;
 }
 
 
@@ -41,7 +50,7 @@ static inline void benchmark() {
 */
 static inline void end_benchmark() {
     end_time = get_time();
-    double elapsed = (end_time - start_time);
+    double elapsed = (end_time - start_time) / (double)f.QuadPart;
     benchmark_count++;
     printf("[%d] Time Elapsed: %f\n", benchmark_count, elapsed);
 
