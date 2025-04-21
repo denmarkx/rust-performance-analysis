@@ -10,7 +10,6 @@ fn use_random_values(arg_1: &str) -> bool {
 }
 
 fn warn_arguments(args : &mut Vec<String>) {
-    dbg!(args.len());
     if args.len() == 2 {
         if use_random_values(&args[1]) {
             args.push("5".to_string()); // Randomization upper bound.
