@@ -16,16 +16,20 @@ fn randomize_array(a : u32, b : u32, c : usize) -> Vec<u32> {
 fn randomize_array_set(a : u32, b : u32, c : usize) -> Vec<Vec<u32>> {
     let mut rng;
 
-    // Create c arrays of len c
-    let mut array = vec![vec![0; c]; c];
+    // Create c arrays
+    let mut array: Vec<Vec<u32>> = vec![];
+    let mut rng_gen = rand::rng();
 
     // Insert into array:
-    for i in 0..c {
-        for j in 0..c {
-            rng = rand::rng().random_range(a..b+1);
-            array[i][j] = rng.try_into().unwrap();
-            // array.push(rng.try_into().unwrap());
+    for _i in 0..c {
+        // get random size for vec between a and b.
+        let length : usize= rng_gen.random_range(b / 2..=b).try_into().unwrap();
+        let mut vec = vec![0; length];
+        for _j in 0..length {
+            rng = rng_gen.random_range(a..b+1);
+            vec.push(rng.try_into().unwrap());
         }
+        array.push(vec);
     }
     array
 }
