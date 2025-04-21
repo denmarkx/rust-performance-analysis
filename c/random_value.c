@@ -6,8 +6,8 @@
 
 // Util for returning random values between a, b for len c.
 int* random_value(int a, int b, int c) {
-    assert(a < b);
     srand(time(NULL));
+    assert(a < b);
 
     int *array = malloc(c * sizeof(int));
     for (int i = 0; i < c; i++) {
@@ -26,6 +26,7 @@ int* random_value(int a, int b, int c) {
 ArrayData random_value_set(int a, int b, int c, int rand_length) {
     ArrayData data;
     data.arr_size = c;
+    srand(time(NULL));
 
     int length = 2;
 

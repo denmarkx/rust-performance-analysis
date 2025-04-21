@@ -3,7 +3,7 @@ use std::time::Duration;
 use lazy_static::lazy_static;
 use std::sync::Mutex;
 
-const AVERAGE_ONLY : bool = true;
+const AVERAGE_ONLY : bool = false;
 
 /*
 * Given a function and <n> for number of benchmarks,
