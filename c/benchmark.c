@@ -1,7 +1,6 @@
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #include <winnt.h>
-
-// XXX: this'll obviously break when using on osx
 
 static LARGE_INTEGER f;
 double get_time() {
@@ -15,9 +14,24 @@ double get_time() {
 
     LARGE_INTEGER t;
     QueryPerformanceCounter(&t);
-    return (double)t.QuadPart;
+    return (double)t.QuadPart / f.QuadPart;
 }
+#elif defined(__APPLE__)
+#include <mach/mach_time.h>
+double get_time() {
+    static mach_timebase_info_data_t timebase;
+    static int TIMEBASE_INITIALIZED = 0;
 
+    if (!TIMEBASE_INITIALIZED) {
+        mach_timebase_info(&timebase);
+        TIMEBASE_INITIALIZED = 1;
+    }
+
+    uint64_t time = mach_absolute_time();
+    // Convert to seconds
+    return (double)time * timebase.numer / timebase.denom / 1e9;
+}
+#endif
 
 static double start_time;
 static double end_time;
@@ -50,7 +64,7 @@ static inline void benchmark() {
 */
 static inline void end_benchmark() {
     end_time = get_time();
-    double elapsed = (end_time - start_time) / (double)f.QuadPart;
+    double elapsed = (end_time - start_time);
     benchmark_count++;
     printf("[%d] Time Elapsed: %f\n", benchmark_count, elapsed);
 

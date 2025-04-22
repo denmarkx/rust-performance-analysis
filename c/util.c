@@ -2,6 +2,16 @@
 #include <string.h>
 #include <stdio.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+// Windows: use strtok_s as-is
+#define STRTOK(str, delim, context) strtok_s((str), (delim), (context))
+
+#else
+// POSIX (macOS/Linux): use strtok_r
+#define STRTOK(str, delim, context) strtok_r((str), (delim), (context))
+#endif
+
+
 void print_array(int* array, size_t size) {
     for (size_t i = 0; i < size; i++) {
         printf("%d ", array[i]);
@@ -79,7 +89,7 @@ ArrayData read_from_file(char* file_name) {
 
         while (read_line(&line, &len, file) != -1) {
             // Delimited by a space:
-            token = strtok_s(line, " \n", &n_token);
+            token = STRTOK(line, " \n", &n_token);
 
             // First token is the array size:
             child_array = malloc(atoi(token) * sizeof(int));
@@ -90,7 +100,7 @@ ArrayData read_from_file(char* file_name) {
             // Reset j:
             j = 0;
             while (token != NULL && j < count_arr[i]) {
-                token = strtok_s(NULL, " \n", &n_token);
+                token = STRTOK(NULL, " \n", &n_token);
                 
                 // Subsequent are just items of the child array.
                 child_array[j] = atoi(token);
