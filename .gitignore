@@ -10,3 +10,6 @@
 # Generated with compiledb make all (lsp-clangd)
 compile_commands.json
 .cache/
+
+# Rust
+target/

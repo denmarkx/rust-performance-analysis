@@ -17,7 +17,7 @@ lazy_static! {
     static ref TIMES : Mutex<Vec<Duration>> = Mutex::new(Vec::new());
 }
 
-fn benchmark<F: FnMut() -> T, T>(n : usize, mut f: F) {
+pub fn benchmark<F: FnMut() -> T, T>(n : usize, mut f: F) {
     // let mut t = Vec::with_capacity(n);
 
     // Iterate
