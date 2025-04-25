@@ -16,5 +16,5 @@ use std::env;
 fn main() {
 
     let array = random_value::randomize_array_set(1, 5, 6);
-    insertion_sort::start_sort(array);
+    insertion_sort::do_benchmark(array, true);
 }

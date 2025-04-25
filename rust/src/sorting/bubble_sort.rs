@@ -1,5 +1,10 @@
 use crate::benchmark::benchmark;
 
+/*
+*
+* BUBBLE SORT SAFE
+*
+*/
 #[inline(never)]
 fn bubble_sort(array: &mut[u32]) {
     // Bubble Sort Implementation:
@@ -14,10 +19,40 @@ fn bubble_sort(array: &mut[u32]) {
 }
 
 /*
+*
+* BUBBLE SORT UNSAFE
+* USE OF RAW POINTERS!
+* This was a change for the presentation's final slides as I
+# ended up changing this to get the data vs making a new function.
+* ..will need to re-adapt and split up later.
+*
+*/
+fn bubble_sort_unsafe(array: &mut[u32]) {
+    // Bubble Sort Implementation:
+    unsafe {
+        let mut ptr = array.as_mut_ptr();
+
+        for _i in 0..array.len() {
+            for j in 0..array.len()-1 {
+                if *ptr.add(j) > *ptr.add(j + 1) {
+                    // swap:
+                    ptr.add(j).swap(ptr.add(j + 1));
+                }
+            }
+        }
+    }
+}
+
+
+/*
 * start_sort: accepts 2D array and benchmarks per each iteration.
 */
-pub fn start_sort(array: Vec<Vec<u32>>) {
+pub fn do_benchmark(array: Vec<Vec<u32>>, use_unsafe : bool) {
     for sub_array in array.iter() {
-        benchmark(1, || bubble_sort(&mut sub_array.clone()));
+        if use_unsafe {
+            benchmark(1, || bubble_sort_unsafe(&mut sub_array.clone()));
+        } else {
+            benchmark(1, || bubble_sort(&mut sub_array.clone()));
+        }
     }
 }
