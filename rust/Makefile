@@ -1,8 +1,16 @@
-insertion_sort: sorting/insertion_sort.rs
-	cargo single build sorting/insertion_sort.rs
+debug:
+	cargo build
+	cargo run
 
-quick_sort: sorting/quick_sort.rs
-	cargo single build sorting/quick_sort.rs
+release:
+	cargo build --release
+	cargo run --release
 
-sorting: insertion_sort quick_sort
-all: sorting
+# Windows uses rmdir, anything else'll use rm.
+ifeq ($(OS),Windows_NT)
+clean:
+	rmdir /s /q target
+else
+clean:
+	rm -r target
+endif
