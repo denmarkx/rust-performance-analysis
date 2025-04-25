@@ -1,9 +1,9 @@
 // SORTING:
-mod sorting;
+mod sorting { pub mod bubble_sort; pub mod quick_sort; pub mod insertion_sort; }
 use sorting::{bubble_sort, quick_sort, insertion_sort};
 
 // MATH:
-mod math;
+mod math { pub mod matrix_mult; }
 use math::{matrix_mult};
 
 // UTIL:
