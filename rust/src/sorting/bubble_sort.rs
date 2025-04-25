@@ -14,9 +14,9 @@ fn bubble_sort(array: &mut[u32]) {
 }
 
 /*
-* do_sort: accepts 2D array and benchmarks per each iteration.
+* start_sort: accepts 2D array and benchmarks per each iteration.
 */
-pub fn do_sort(array: Vec<Vec<u32>>) {
+pub fn start_sort(array: Vec<Vec<u32>>) {
     for sub_array in array.iter() {
         benchmark(1, || bubble_sort(&mut sub_array.clone()));
     }

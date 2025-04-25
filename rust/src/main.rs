@@ -1,8 +1,10 @@
 // SORTING:
 mod sorting;
-use sorting::{bubble_sort};
+use sorting::{bubble_sort, quick_sort, insertion_sort};
 
 // MATH:
+mod math;
+use math::{matrix_mult};
 
 // UTIL:
 mod random_value;
@@ -14,5 +16,5 @@ use std::env;
 fn main() {
 
     let array = random_value::randomize_array_set(1, 5, 6);
-    bubble_sort::do_sort(array);
+    insertion_sort::start_sort(array);
 }

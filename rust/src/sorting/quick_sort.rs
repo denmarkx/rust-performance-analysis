@@ -1,14 +1,6 @@
-// rand = "0.9"
-// lazy_static = "1.5.0"
+use crate::benchmark::benchmark;
 
-use rand::prelude::*;
-use std::env;
-
-// for the use of cargo-single we have to traverse backwards.
-include!{"../../../random_value.rs"}
-include!{"../../../benchmark.rs"}
-include!{"../../../util.rs"}
-
+#[inline(never)]
 fn partition(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
     let pivot = high;
     let mut i = low;
@@ -23,6 +15,7 @@ fn partition(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
     i
 }
 
+#[inline(never)]
 fn sort(array: &mut Vec<u32>, low: usize, high: usize) {
     if low >= high {
         return;
@@ -32,13 +25,12 @@ fn sort(array: &mut Vec<u32>, low: usize, high: usize) {
     sort(array, pivot+1, high);
 }
 
-
-fn main() {
-    let mut args : Vec<String> = env::args().collect();
-    warn_arguments(&mut args);
-
-    let array_size : usize = args[1].parse::<usize>().unwrap();
-    let mut array = randomize_array(1, args[2].parse::<u32>().unwrap(), array_size);
-
-    benchmark(args[3].parse::<usize>().unwrap(), || sort(&mut array, 1, array_size-1));
+/*
+* Primary entry point for Quick Sort function.
+* Accepts a 2D array and benchmarks per iteration.
+*/
+pub fn start_sort(array: Vec<Vec<u32>>) {
+    for sub_array in array.iter() {
+        benchmark(1, || sort(&mut sub_array.clone(), 1, sub_array.len()-1));
+    }
 }

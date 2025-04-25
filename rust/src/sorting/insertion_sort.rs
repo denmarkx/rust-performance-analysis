@@ -1,12 +1,4 @@
-// rand = "0.9"
-
-use rand::prelude::*;
-use std::env;
-
-// for the use of cargo-single we have to traverse backwards.
-include!{"../../../random_value.rs"}
-include!{"../../../benchmark.rs"}
-include!{"../../../util.rs"}
+use crate::benchmark::benchmark;
 
 fn insertion_sort(array: &mut [u32]) {
     // Start with 2nd item:
@@ -25,12 +17,12 @@ fn insertion_sort(array: &mut [u32]) {
     }
 }
 
-fn main() {
-    let mut args : Vec<String> = env::args().collect();
-    warn_arguments(&mut args);
 
-    let array_size : usize = args[1].parse::<usize>().unwrap();
-    let mut array = randomize_array(1, args[2].parse::<u32>().unwrap(), array_size);
-
-    benchmark(args[3].parse::<usize>().unwrap(), || insertion_sort(&mut array));
+/*
+* start_sort: accepts 2D array and benchmarks per each iteration.
+*/
+pub fn start_sort(array: Vec<Vec<u32>>) {
+    for sub_array in array.iter() {
+        benchmark(1, || insertion_sort(&mut sub_array.clone()));
+    }
 }
