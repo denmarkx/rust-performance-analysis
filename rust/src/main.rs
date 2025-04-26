@@ -30,21 +30,63 @@ struct Args {
 
     /// random range maximum
     #[argh(option, default = "10")]
-    r_max : u32,
+    r_max: u32,
 
     /// number of iterations:
-    #[argh(option, default = "10")]
-    n_iter : usize,
+    #[argh(option, default = "10", short = 'n')]
+    n_iter: usize,
+
+    /// algorithm to benchmark
+    #[argh(option, short = 'a', from_str_fn(validate_algorithm))]
+    algorithm: Option<String>,
+
+    /// runs the unsafe version
+    #[argh(switch, short = 'u')]
+    use_unsafe : bool,
+
+    /// length of inner random array. if not specified or is 0, will be random.
+    /// REQUIRED to be non-zero for matrix multiplication.
+    /// for sorting algorithms, this will OVERRIDE n_iter.
+    #[argh(option, default = "0", short = 'l')]
+    inner_length : usize,
+}
+
+fn validate_algorithm(value: &str) -> Result<String, String> {
+    // Panic if not apart of our main algorithms:
+    match value {
+        "insertion" => {},
+        "bubble" => {},
+        "quick" => {},
+        "matrix" => {},
+        &_ => panic!("Invalid algorithm specified."),
+    };
+    Ok(String::from(value))
 }
 
 fn main() {
+    // args:
     let args : Args = argh::from_env();
-    let mut array = vec![];
+    let algorithm: String = args.algorithm.unwrap();
+
+    // Arrays:
+    let mut array: Vec<Vec<u32>> = vec![];
+    let mut array2: Vec<Vec<u32>> = vec![];
 
     // Check if we're from a file.
     if args.file.is_none() {
-        // getting random arrays...
-        array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter);
+        // Matrix Multiplication requires another array.
+        array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length);
+
+        if algorithm == "matrix" {
+            // Let's make use args.inner_length is NOT 0.
+            if args.inner_length == 0 {
+                panic!("Inner Length argument must be non-zero and positive for matrix multiplication.");
+            }
+
+            array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length);
+            array2 = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length);
+        }
+
     } else {
         // We can ensure that we're given a file (literally we did a check before this)
         // so I'll unwrap Option<> from arg.sfile.
@@ -58,8 +100,25 @@ fn main() {
         }
     }
 
-    // Do the benchmark:
-    insertion_sort::do_benchmark(array, true);
+
+    // Seems like the only way to really do this would be to
+    // actually place all your args in some DS and just allow
+    // do_benchmark to accept that as your argument.
+    //
+    // I'll avoid that only because of matrix multipication expecting more.
+    // algorithm is required so we can safely unwrap.
+    match algorithm.as_str() {
+        // SORTING:
+        "insertion" => insertion_sort::do_benchmark(array, args.use_unsafe),
+        "bubble" => bubble_sort::do_benchmark(array, args.use_unsafe),
+        "quick" => quick_sort::do_benchmark(array, args.use_unsafe),
+
+        // MATH:
+        "matrix" => matrix_mult::do_benchmark(args.n_iter, array, array2, args.use_unsafe),
+
+        // UNIMPLEMENTED:
+        &_ => todo!("algorithm: {}", algorithm),
+    }
 }
 
 /*

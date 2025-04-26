@@ -25,9 +25,17 @@ fn randomize_array(a : u32, b : u32, c : usize) -> Vec<u32> {
 *
 * The length of the inner array is determined by:
 *   [0..random_range(b / 2..=b)].
+*   ..IF inner_length is 0.
+*   ..otherwise, it will use whatever was passed to inner_length
 */
-pub fn randomize_array_set(a : u32, b : u32, c : usize) -> Vec<Vec<u32>> {
+pub fn randomize_array_set(a : u32, b : u32, mut c : usize, inner_length : usize) -> Vec<Vec<u32>> {
+    // c will change to inner_length if inner_length is not 0.
+    if inner_length != 0 {
+        c = inner_length;
+    }
+
     let mut rng;
+    let mut length = c;
 
     // Create c arrays
     let mut array: Vec<Vec<u32>> = vec![];
@@ -36,11 +44,13 @@ pub fn randomize_array_set(a : u32, b : u32, c : usize) -> Vec<Vec<u32>> {
     // Insert into array:
     for _i in 0..c {
         // get random size for vec between a and b.
-        let length : usize= rng_gen.random_range(b / 2..=b).try_into().unwrap();
+        if inner_length == 0 {
+            length = rng_gen.random_range(b / 2..=b).try_into().unwrap();
+        }
         let mut vec = vec![0; length];
-        for _j in 0..length {
+        for j in 0..length {
             rng = rng_gen.random_range(a..b+1);
-            vec.push(rng.try_into().unwrap());
+            vec[j] = rng.try_into().unwrap();
         }
         array.push(vec);
     }
