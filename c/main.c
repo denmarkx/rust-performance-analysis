@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
 
     // Check if we're given a file.
     if (args.file != NULL) {
+        // read_from_file will exit() if it can't open the file.
         arr_data = read_from_file(args.file);
     } else {
         // Otherwise, we're using random values.
@@ -44,6 +45,7 @@ int main(int argc, char** argv) {
     }
 
     // Now, a router for our algorithm.
+    int f_got_algorithm = 0;
     for (
         AlgoFuncHldr* router = AFRouter;
         router != AFRouter + sizeof(AFRouter) / sizeof(AFRouter[0]);
@@ -52,9 +54,20 @@ int main(int argc, char** argv) {
         if (strcmp(router->string, args.algorithm) == 0) {
             // This assumes the parameter types of our func.
             for (unsigned int i = 0; i < arr_data.arr_size; i++) {
+                printf("Algorithm: %s\n", args.algorithm);
                 (*router->func)(arr_data.array[i], arr_data.count_arr[i]-1);
+                f_got_algorithm  = 1;
+                break;
             }
         }
+    }
+
+    if (!f_got_algorithm) {
+        fprintf(stderr, "Invalid algorithm specified. Acceptable are:\n");
+        fprintf(stderr, "  insertion\n");
+        fprintf(stderr, "  bubble\n");
+        fprintf(stderr, "  quick\n");
+        exit(1);
     }
 
     // and some cleanup

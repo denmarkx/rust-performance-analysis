@@ -121,7 +121,8 @@ ArrayData read_from_file(char* file_name) {
         free(line);
     }
     else {
-        fprintf(stderr, "Unable to open file\n");
+        fprintf(stderr, "Could not open file: %s.\n", file_name);
+        exit(1);
     }
 
     // Place everything in here:
@@ -178,15 +179,15 @@ void print_usage() {
     printf("Acceptable Arguments:\n\n");
     printf("  --file [-f] <filename>\n");
     printf("     Input File. All other arguments will be voided except for algorithm.\n\n");
-    printf("  --r_min [-r] <unsigned int>\n");
+    printf("  --r-min [-r] <unsigned int>\n");
     printf("     The lower bound of the rand_range for each element in array.\n\n");
-    printf("  --r_max [-m] <unsigned int>\n");
+    printf("  --r-max [-m] <unsigned int>\n");
     printf("     The upper bound of the rand_range for each element in array.\n\n");
-    printf("  --n_iter [-i] <unsigned int>\n");
+    printf("  --n-iter [-i] <unsigned int>\n");
     printf("     The number of times to benchmark.\n\n");
     printf("  --algorithm [-a] <algorithm>\n");
     printf("     Algorithms: {insertion, bubble, quick, matrix}\n\n");
-    printf("  --inner_length [-l] <unsigned int>\n");
+    printf("  --inner-length [-l] <unsigned int>\n");
     printf("     The fixed length of all inner arrays. 0 will make it random.\n     Required for Matrix Multiplication.\n");
 }
 
@@ -232,6 +233,31 @@ Args parse_args(int argc, char* argv[]) {
                 break;
         }
     }
+
+    // Let's clean things up and verify a few things.
+
+    // r_min, r_max
+    if (args.r_min < 0 || args.r_max <= 0) {
+        fprintf(stderr, "--r_min [-r] cannot be less than 0 and --r_max [-m] cannot be less than or equal to 0!\n");
+        exit(1);
+    }
+
+    // inner_length:
+    if (args.inner_length < 0) {
+        fprintf(stderr, "--inner_length [-l] cannot be less than zero!\n");
+        exit(1);
+    }
+
+    // n_iter:
+    if (args.n_iter <= 0) {
+        fprintf(stderr, "--n_iter [-i] cannot be less than or equal to zero!\n");
+        exit(1);
+    }
+
+
+    // algorithm and file is done by main.c
+    // but we will lower the algorithm:
+    args.algorithm = strlwr(args.algorithm);
 
     return args;
 }
