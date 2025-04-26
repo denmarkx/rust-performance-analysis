@@ -6,9 +6,15 @@
 // Windows: use strtok_s as-is
 #define STRTOK(str, delim, context) strtok_s((str), (delim), (context))
 
+// also Windows: getopt from MINGW/MSYS.
+#include <getopt.h>
+
 #else
 // POSIX (macOS/Linux): use strtok_r
 #define STRTOK(str, delim, context) strtok_r((str), (delim), (context))
+
+// we'll get getopt from unistd.
+#include <unistd.h>
 #endif
 
 
@@ -143,6 +149,83 @@ int use_random_values(char* argv) {
         return 1;
     }
     return strcmp(argv, "-f") != 0;
+}
+
+
+/*
+* Argument Struct similar to rust/src/main.rs.
+*/
+typedef struct Args {
+    char* file;
+    unsigned int r_min;
+    unsigned int r_max;
+    unsigned int n_iter;
+    char* algorithm;
+    unsigned int inner_length;
+} Args;
+
+
+static struct option long_options[] = {
+    {"file", optional_argument, NULL, 'f'},
+    {"r_min", optional_argument, NULL, 'r'},
+    {"r_max", optional_argument, NULL, 'm'},
+    {"n_iter", optional_argument, NULL, 'i'},
+    {"algorithm", required_argument, NULL, 'a'},
+    {"inner_length", optional_argument, NULL, 'l'},
+};
+
+void print_usage() {
+    printf("Acceptable Arguments:\n\n");
+    printf("  --file [-f] <filename>\n");
+    printf("     Input File. All other arguments will be voided except for algorithm.\n\n");
+    printf("  --r_min [-r] <unsigned int>\n");
+    printf("     The lower bound of the rand_range for each element in array.\n\n");
+    printf("  --r_max [-m] <unsigned int>\n");
+    printf("     The upper bound of the rand_range for each element in array.\n\n");
+    printf("  --n_iter [-i] <unsigned int>\n");
+    printf("     The number of times to benchmark.\n\n");
+    printf("  --algorithm [-a] <algorithm>\n");
+    printf("     Algorithms: {insertion, bubble, quick, matrix}\n\n");
+    printf("  --inner_length [-l] <unsigned int>\n");
+    printf("     The fixed length of all inner arrays. 0 will make it random.\n     Required for Matrix Multiplication.\n");
+}
+
+Args parse_args(int argc, char* argv[]) {
+    Args args;
+    int opt;
+
+    if (argc <= 1) {
+        print_usage();
+    }
+
+    // Option Router
+    while ((opt = getopt_long(argc, argv, "rmila:f:", long_options, NULL)) != -1) {
+        switch (opt) {
+            case 'f':
+                args.file = optarg;
+                break;
+            case 'r':
+                args.r_min = atoi(optarg);
+                break;
+            case 'm':
+                args.r_max = atoi(optarg);
+                break;
+            case 'i':
+                args.n_iter = atoi(optarg);
+                break;
+            case 'a':
+                args.algorithm = optarg;
+                break;
+            case 'l':
+                args.inner_length = atoi(optarg);
+                break;
+            default:
+                print_usage();
+                break;
+        }
+    }
+
+    return args;
 }
 
 /*
