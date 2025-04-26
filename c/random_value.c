@@ -2,8 +2,6 @@
 #include <time.h>
 #include <assert.h>
 
-#include "util.c"
-
 // Util for returning random values between a, b for len c.
 int* random_value(int a, int b, int c) {
     srand(time(NULL));
@@ -18,24 +16,32 @@ int* random_value(int a, int b, int c) {
 }
 
 /*
-* Returns ArrayData of random_value arrays.
-* random_value range is [a, b] with a length of random [b/2, b] if rand_length=1
-* the number of iterations within arrayData's array is c.
+* Given three parameters, a, b, c, returns a 2D vector of randomized values.
+* a (u32), b (u32) -- random_range(a..b+1) for each element in inner vector.
+* c (usize): Number of arrays.
+*
+* The length of the inner array is determined by:
+*   [0..random_range(b / 2..=b)].
+*   ..IF inner_length is 0.
+*   ..otherwise, it will use whatever was passed to inner_length
 */
 
 ArrayData random_value_set(int a, int b, int c, int rand_length) {
     ArrayData data;
-    data.arr_size = c;
-    srand(time(NULL));
 
-    int length = 2;
+    if (rand_length != 0) {
+        c = rand_length; 
+    }
+
+    int length = c;
+    data.arr_size = c;
 
     // Pre-determine our individual array lengths:
     int* count_arr = malloc(c * sizeof(int));
     for (int i = 0; i < c; i++) {
         // Random length:
         length = rand_length;
-        if (rand_length == 1) {
+        if (rand_length == 0) {
             length = rand() % (b + 1 - (b/2)) + (b/2);
         }
         count_arr[i] = length;

@@ -198,8 +198,16 @@ Args parse_args(int argc, char* argv[]) {
         print_usage();
     }
 
+    // We'll set some defaults:
+    args.file = NULL;
+    args.r_min = 0;
+    args.r_max = 10;
+    args.n_iter = 10;
+    args.algorithm = "insertion";
+    args.inner_length = 0;
+
     // Option Router
-    while ((opt = getopt_long(argc, argv, "rmila:f:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "r:m:i:l:a:f:", long_options, NULL)) != -1) {
         switch (opt) {
             case 'f':
                 args.file = optarg;

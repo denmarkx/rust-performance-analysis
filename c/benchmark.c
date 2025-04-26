@@ -1,3 +1,6 @@
+#ifndef BENCHMARK
+#define BENCHMARK
+
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #include <winnt.h>
@@ -96,3 +99,5 @@ static inline void complete_benchmark() {
         free(benchmark_totals);
     }
 }
+
+#endif
