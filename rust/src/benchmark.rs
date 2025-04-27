@@ -2,8 +2,13 @@ use std::time::Instant;
 use std::time::Duration;
 use lazy_static::lazy_static;
 use std::sync::Mutex;
+use std::{io, error};
 
 const AVERAGE_ONLY : bool = false;
+
+lazy_static! {
+    static ref TIMES : Mutex<Vec<Duration>> = Mutex::new(Vec::new());
+}
 
 /*
 * Given a function and <n> for number of benchmarks,
@@ -11,12 +16,6 @@ const AVERAGE_ONLY : bool = false;
 * it takes in milliseconds. Prints the elapsed time for
 * each function and the total average time.
 */
-
-// static mut TIMES: Vec<Duration> = Vec::new();
-lazy_static! {
-    static ref TIMES : Mutex<Vec<Duration>> = Mutex::new(Vec::new());
-}
-
 pub fn benchmark<F: FnMut() -> T, T>(n : usize, mut f: F) {
     // let mut t = Vec::with_capacity(n);
 
@@ -26,15 +25,32 @@ pub fn benchmark<F: FnMut() -> T, T>(n : usize, mut f: F) {
         f();
         TIMES.lock().unwrap().push(now.elapsed());
         if !AVERAGE_ONLY {
-            println!("[{:?}] Time Elapsed: {:.2?}", i+1, now.elapsed());
+            println!("[{:?}] Time Elapsed: {:.2?}", TIMES.lock().unwrap().len(), now.elapsed());
         }
     }
 }
 
-fn complete_benchmark() {
+pub fn complete_benchmark(algorithm : &str) {
     // Average time:
     let sum : Duration = TIMES.lock().unwrap().iter().sum();
     let count = TIMES.lock().unwrap().len() as u32;
     let average = sum / count;
     println!("Average Time: {:.2?}", average);
+    write(algorithm);
+}
+
+fn write(algorithm: &str) -> Result<(), Box<dyn error::Error>> {
+    let mut wtr = csv::Writer::from_path(algorithm.to_owned() + ".csv")?;
+    wtr.write_record(&["TIME_NS", "TIME_MS", "TIME_S"])?;
+
+    // unwrap from mutex and iter the Vec<Duration>
+    // row # is technically the iteration, so we won't enumerate.
+    for t in TIMES.lock().unwrap().iter() {
+        let nano : u128 = t.as_nanos();
+        let millis : u128 = t.as_millis();
+        let seconds : f64 = t.as_secs_f64();
+        wtr.write_record(&[nano.to_string(), millis.to_string(), seconds.to_string()])?;
+    }
+    wtr.flush();
+    Ok(())
 }

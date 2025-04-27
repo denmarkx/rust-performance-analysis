@@ -119,6 +119,10 @@ fn main() {
         // UNIMPLEMENTED:
         &_ => todo!("algorithm: {}", algorithm),
     }
+
+    // This spits out some useful info like avg. time and it
+    // also writes to CSV.
+    benchmark::complete_benchmark(&algorithm.as_str());
 }
 
 /*
