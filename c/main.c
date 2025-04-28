@@ -53,11 +53,10 @@ int main(int argc, char** argv) {
     ) {
         if (strcmp(router->string, args.algorithm) == 0) {
             // This assumes the parameter types of our func.
+            printf("Algorithm: %s\n", args.algorithm);
             for (unsigned int i = 0; i < arr_data.arr_size; i++) {
-                printf("Algorithm: %s\n", args.algorithm);
                 (*router->func)(arr_data.array[i], arr_data.count_arr[i]-1);
                 f_got_algorithm  = 1;
-                break;
             }
         }
     }
@@ -72,6 +71,6 @@ int main(int argc, char** argv) {
 
     // and some cleanup
     cleanup_array_data(arr_data);
-    complete_benchmark();
+    complete_benchmark(args.algorithm);
     return 0;
 }

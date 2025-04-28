@@ -1,6 +1,13 @@
 #ifndef BENCHMARK
 #define BENCHMARK
 
+#ifdef USE_CSV
+    #include <csv.h>
+    #include <string.h>
+    #include <stdlib.h>
+    #include <stdio.h>
+#endif
+
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #include <winnt.h>
@@ -77,26 +84,85 @@ static inline void end_benchmark() {
     }
 }
 
+#ifdef USE_CSV
+    /*
+    * Writes header row to CSV.
+    */
+    void write_csv_headers(FILE* f) {
+        char* headers[3] = {"TIME_NS", "TIME_MS", "TIME_S"};
+        for (int i = 0; i < 3; i++) {
+            char* header = headers[i];
+            csv_fwrite(f, header, strlen(header));
+            fputc(',', f);
+        }
+        fputc('\n', f);
+    }
+
+
+    /*
+    * Writes non-header row to CSV.
+    */
+    void write_csv(FILE* f, double value) {
+        char str[15];
+
+        // NS:
+        sprintf(str, "%f", value * 1000000);
+        csv_fwrite(f, str, strlen(str));
+        fputc(',', f);
+
+        // MS:
+        sprintf(str, "%f", value);
+        csv_fwrite(f, str, strlen(str));
+        fputc(',', f);
+
+        // S:
+        sprintf(str, "%f", value / 1000);
+        csv_fwrite(f, str, strlen(str));
+        fputc('\n', f);
+    }
+#endif
+
 
 /*
 * Averages the benchmark totals and frees the array.
 * Does nothing if benchmark_count is 0 or 1.
 */
-static inline void complete_benchmark() {
+static inline void complete_benchmark(char* algorithm) {
     // This just means that we didnt provide additional argument when running the program.
     if (benchmark_count <= 1) {
         return;
     }
 
+    #ifdef USE_CSV
+        struct csv_parser p;
+        char file_name[25];
+        strcpy(file_name, algorithm);
+        strcat(file_name, ".csv");
+        FILE* fp = fopen(file_name, "wb+");
+        csv_init(&p, 0);
+        write_csv_headers(fp);
+    #endif
+
     double average = 0;
     for (int i = 0; i < benchmark_count; i++) {
         average += benchmark_totals[i];
+
+        // Write to CSV:
+        #ifdef USE_CSV
+            write_csv(fp, benchmark_totals[i]);
+        #endif
     }
     average /= benchmark_count;
     printf("Average Time: %f\n", average);
 
     if (benchmark_totals != NULL) {
         free(benchmark_totals);
+
+        // Cleanup file:
+        #ifdef USE_CSV
+            fclose(fp);
+            csv_free(&p);
+        #endif
     }
 }
 

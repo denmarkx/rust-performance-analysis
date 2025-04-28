@@ -1,21 +1,18 @@
 CFLAGS = -O3
-GCC = "gcc-14"
+LDFLAGS = ""
+IFLAGS = ""
+GCC = gcc
 
-quick_sort: sorting/quick_sort.c
-	$(GCC) $(CFLAGS) -o quick_sort sorting/quick_sort.c -I.
+ifeq ($(OS),Windows_NT)
+	IFLAGS = -I${VCPKG_ROOT}/installed/x64-windows/include
+	LDFLAGS = -L${VCPKG_ROOT}/installed/x64-windows/lib
+endif
 
-insertion_sort: sorting/insertion_sort.c
-	$(GCC) $(CFLAGS) -o insertion_sort sorting/insertion_sort.c -I.
+all:
+	$(GCC) $(CFLAGS) -o main main.c -I. $(IFLAGS) $(LDFLAGS) -lcsv -DUSE_CSV
 
-bubble_sort: sorting/bubble_sort.c
-	$(GCC) $(CFLAGS) -o bubble_sort sorting/bubble_sort.c -I.
-
-matrix_mult: math/matrix_mult.c
-	$(GCC) $(CFLAGS) -o matrix_mult math/matrix_mult.c -I.
-
-math: matrix_mult
-sorting: insertion_sort quick_sort bubble_sort
-all: sorting math
+nocsv:
+	$(GCC) $(CFLAGS) -o main main.c -I. $(IFLAGS) $(LDFLAGS) -lcsv
 
 clean:
 	del *.exe
