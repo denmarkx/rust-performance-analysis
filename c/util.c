@@ -181,11 +181,11 @@ typedef struct Args {
 
 static struct option long_options[] = {
     {"file", optional_argument, NULL, 'f'},
-    {"r_min", optional_argument, NULL, 'r'},
-    {"r_max", optional_argument, NULL, 'm'},
-    {"n_iter", optional_argument, NULL, 'i'},
-    {"algorithm", required_argument, NULL, 'a'},
-    {"inner_length", optional_argument, NULL, 'l'},
+    {"r-min", optional_argument, NULL, 'r'},
+    {"r-max", optional_argument, NULL, 'm'},
+    {"n-iter", optional_argument, NULL, 'i'},
+    {"algorithm", optional_argument, NULL, 'a'},
+    {"inner-length", optional_argument, NULL, 'l'},
 };
 
 void print_usage() {
@@ -210,6 +210,7 @@ Args parse_args(int argc, char* argv[]) {
 
     if (argc <= 1) {
         print_usage();
+        exit(1);
     }
 
     // We'll set some defaults:
@@ -243,6 +244,7 @@ Args parse_args(int argc, char* argv[]) {
                 break;
             default:
                 print_usage();
+                exit(1);
                 break;
         }
     }
