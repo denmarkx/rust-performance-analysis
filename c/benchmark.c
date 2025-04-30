@@ -2,7 +2,11 @@
 #define BENCHMARK
 
 #ifdef USE_CSV
-    #include <csv.h>
+    #if defined(_WIN32) || defined(_WIN64)
+        #include <csv.h>
+    #else
+        #include <libcsv/csv.h>
+    #endif
     #include <string.h>
     #include <stdlib.h>
     #include <stdio.h>

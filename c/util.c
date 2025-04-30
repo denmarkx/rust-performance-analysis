@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 // Windows: use strtok_s as-is
@@ -15,8 +16,20 @@
 
 // we'll get getopt from unistd.
 #include <unistd.h>
+#include <getopt.h>
 #endif
 
+// no strlwr on osx.
+char* to_lower(char* str) {
+    size_t len = strlen(str);
+    char* n_str = malloc(len * sizeof(char));
+
+    for (int i = 0; i < len; i++) {
+        n_str[i] = tolower(str[i]);
+    }
+
+    return n_str;
+}
 
 void print_array(int* array, size_t size) {
     for (size_t i = 0; i < size; i++) {
@@ -257,7 +270,7 @@ Args parse_args(int argc, char* argv[]) {
 
     // algorithm and file is done by main.c
     // but we will lower the algorithm:
-    args.algorithm = strlwr(args.algorithm);
+    args.algorithm = to_lower(args.algorithm);
 
     return args;
 }
