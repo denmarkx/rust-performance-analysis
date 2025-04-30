@@ -14,3 +14,12 @@ compile_commands.json
 # Rust
 target/
 Cargo.lock
+
+# debug symbols
+*.dSYM
+
+# c exes
+main
+
+# mac
+*.DS_STORE
