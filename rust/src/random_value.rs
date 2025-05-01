@@ -45,7 +45,7 @@ pub fn randomize_array_set(a : u32, b : u32, mut c : usize, inner_length : usize
     for _i in 0..c {
         // get random size for vec between a and b.
         if inner_length == 0 {
-            length = rng_gen.random_range(b / 2..=b).try_into().unwrap();
+            length = rng_gen.random_range(b / 2..=b) as usize;
         }
         let mut vec = vec![0; length];
         for j in 0..length {
