@@ -74,12 +74,14 @@ fn insertion_sort_rp(array: &mut Vec<u32>) {
 /*
 * start_sort: accepts 2D array and benchmarks per each iteration.
 */
-pub fn do_benchmark(array: &mut Vec<Vec<u32>>, use_unsafe : bool) {
+pub fn do_benchmark(array: &mut Vec<Vec<u32>>, method_type : &str) {
+    let sort_method : fn(&mut Vec<u32>) = match method_type {
+        "oob" => insertion_sort_oob,
+        "rptr" => insertion_sort_rp,
+        &_ => insertion_sort,
+    };
+
     for mut sub_array in array.iter_mut() {
-        if use_unsafe {
-            benchmark(1, || insertion_sort_oob(sub_array));
-        } else {
-            benchmark(1, || insertion_sort(sub_array));
-        }
+        benchmark(1, || sort_method(sub_array))
     }
 }

@@ -42,8 +42,8 @@ struct Args {
     algorithm: String,
 
     /// runs the unsafe version
-    #[argh(switch, short = 'u')]
-    use_unsafe : bool,
+    #[argh(option, default = "String::from(\"\")", short = 'u', from_str_fn(validate_unsafe_type))]
+    unsafe_type : String,
 
     /// length of inner random array. if not specified or is 0, will be random.
     /// REQUIRED to be non-zero for matrix multiplication.
@@ -61,6 +61,18 @@ fn validate_algorithm(value: &str) -> Result<String, String> {
         "matrix" => {},
         &_ => { 
             eprintln!("Invalid argument specified! Use: [insertion, bubble, quick, matrix]");
+            process::exit(1);
+            },
+    };
+    Ok(String::from(value))
+}
+
+fn validate_unsafe_type(value: &str) -> Result<String, String> {
+    match value {
+        "oob" => {},
+        "rptr" => {},
+        &_ => {
+            eprintln!("Invalid argument to --unsafe-type! Use: [oob, rptr]");
             process::exit(1);
             },
     };
@@ -114,12 +126,12 @@ fn main() {
     // algorithm is required so we can safely unwrap.
     match algorithm.as_str() {
         // SORTING:
-        "insertion" => insertion_sort::do_benchmark(&mut array, args.use_unsafe),
-        "bubble" => bubble_sort::do_benchmark(&mut array, args.use_unsafe),
-        "quick" => quick_sort::do_benchmark(&mut array, args.use_unsafe),
+        "insertion" => insertion_sort::do_benchmark(&mut array, &args.unsafe_type),
+        // "bubble" => bubble_sort::do_benchmark(&mut array, args.use_unsafe),
+        // "quick" => quick_sort::do_benchmark(&mut array, args.use_unsafe),
 
         // MATH:
-        "matrix" => matrix_mult::do_benchmark(args.n_iter, &mut array, &mut array2, args.use_unsafe),
+        // "matrix" => matrix_mult::do_benchmark(args.n_iter, &mut array, &mut array2, args.use_unsafe),
 
         // UNIMPLEMENTED:
         &_ => todo!("algorithm: {}", algorithm),
