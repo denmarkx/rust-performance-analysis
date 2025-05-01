@@ -127,7 +127,7 @@ fn main() {
     match algorithm.as_str() {
         // SORTING:
         "insertion" => insertion_sort::do_benchmark(&mut array, &args.unsafe_type),
-        // "bubble" => bubble_sort::do_benchmark(&mut array, args.use_unsafe),
+        "bubble" => bubble_sort::do_benchmark(&mut array, &args.unsafe_type),
         // "quick" => quick_sort::do_benchmark(&mut array, args.use_unsafe),
 
         // MATH:

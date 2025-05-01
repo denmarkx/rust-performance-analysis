@@ -5,6 +5,7 @@ use crate::benchmark::benchmark;
 * INSERTION SORT: SAFE
 *
 */
+#[inline(never)]
 fn insertion_sort(array: &mut Vec<u32>) {
     // Start with 2nd item:
     for i in 1..array.len() {
@@ -28,6 +29,7 @@ fn insertion_sort(array: &mut Vec<u32>) {
 * (NO OUT OF BOUNDS CHECK)
 *
 */
+#[inline(never)]
 fn insertion_sort_oob(array: &mut Vec<u32>) {
     // Start with 2nd item:
     for i in 1..array.len() {
@@ -55,6 +57,7 @@ fn insertion_sort_oob(array: &mut Vec<u32>) {
 *   (RAW POINTERS)
 *
 */
+#[inline(never)]
 fn insertion_sort_rp(array: &mut Vec<u32>) {
     let x = array.as_mut_ptr();
     for i in 1..array.len() {
