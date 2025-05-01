@@ -131,7 +131,7 @@ fn main() {
         "quick" => quick_sort::do_benchmark(&mut array, &args.unsafe_type),
 
         // MATH:
-        // "matrix" => matrix_mult::do_benchmark(args.n_iter, &mut array, &mut array2, args.use_unsafe),
+        "matrix" => matrix_mult::do_benchmark(args.n_iter, &mut array, &mut array2, &args.unsafe_type),
 
         // UNIMPLEMENTED:
         &_ => todo!("algorithm: {}", algorithm),

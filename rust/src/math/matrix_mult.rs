@@ -21,8 +21,9 @@ fn matrix_mult(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
 /*
 * Simple matrix multiplication--UNSAFE.
 * Assumes that mat_a and mat_b are the same dimensions.
+* (NO OUT OF BOUNDS)
 */
-fn matrix_mult_unsafe(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
+fn matrix_mult_oob(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
     let count = mat_a.len();
     let mut mat_c = vec![vec![0; count]; count];
 
@@ -39,19 +40,50 @@ fn matrix_mult_unsafe(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
 
 
 /*
-* Given a number of benchmark times and two matrices, benchmark per first argument.
-* Final argument is use_unsafe: this'll benchmark matrix_mult_unsafe.
+* Simple matrix multiplication--UNSAFE.
+* Assumes that mat_a and mat_b are the same dimensions.
+* (RAW POINTERS)
 */
-pub fn do_benchmark(
-	benchmark_times : usize,
-	mut mat_a : &mut Vec<Vec<u32>>,
-	mut mat_b : &mut Vec<Vec<u32>>,
-	use_unsafe : bool) {
+fn matrix_mult_rp(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
+    let count = mat_a.len();
+    let mut mat_c = vec![vec![0; count]; count];
 
-	// Choose which to benchmark:
-	if use_unsafe {
-    	benchmark(benchmark_times, || matrix_mult_unsafe(mat_a, mat_b));
-    } else {
-    	benchmark(benchmark_times, || matrix_mult(mat_a, mat_b));
+    let mat_a_ptr = mat_a.as_ptr();
+    let mat_b_ptr = mat_b.as_ptr();
+    let mat_c_ptr = mat_c.as_mut_ptr();
+
+    unsafe {
+        for i in 0..count {
+            let a_r = mat_a_ptr.add(i);
+            let c_r = mat_c_ptr.add(i);
+            for j in 0..count {
+                let mut sum = 0;
+                for k in 0..count {
+                    let b_r = mat_b_ptr.add(k);
+                    // we kinda have to do it this way because vec doesnt implement copy
+                    // and we don't really wanna .clone()
+                    sum += *(*a_r).as_ptr().add(k) * *(*b_r).as_ptr().add(j);
+                }
+                let c = (*c_r).as_mut_ptr().add(j);
+                *c = sum;
+            }
+        }
     }
 }
+
+pub fn do_benchmark(
+    benchmark_times : usize,
+    mut mat_a : &mut Vec<Vec<u32>>,
+    mut mat_b : &mut Vec<Vec<u32>>,
+    method_type : &str) {
+
+    let mat_method : fn(&mut Vec<Vec<u32>>, &mut Vec<Vec<u32>>) = match method_type {
+        "oob" => matrix_mult_oob,
+        "rptr" => matrix_mult_rp,
+        &_ => matrix_mult,
+    };
+
+    benchmark(benchmark_times, || mat_method(mat_a, mat_b))
+}
+
+
