@@ -68,6 +68,7 @@ fn insertion_sort_rp(array: &mut Vec<u32>) {
                 // https://doc.rust-lang.org/src/core/ptr/mod.rs.html#1009
                 let tmp = *x.add(j);
                 *x.add(j) = *x.add(j-1);
+                *x.add(j-1) = tmp;
                 j -= 1;
             }
         }
