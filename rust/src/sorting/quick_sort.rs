@@ -10,9 +10,9 @@ fn partition(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
     let pivot = high;
     let mut i = low;
 
-    for j in low..pivot-1 {
+    for j in low..pivot {
         if array[j] <= array[pivot] {
-            array.swap(j, i);
+            array.swap(i, j);
             i+=1;
         }
     }
@@ -33,7 +33,7 @@ fn partition_oob(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
 
     unsafe {
         let mut ptr = array.as_mut_ptr();
-        for j in low..pivot-1 {
+        for j in low..pivot {
             if array.get_unchecked(j) <= array.get_unchecked(pivot) {
                 // array.swap(j, i);
                 // https://doc.rust-lang.org/src/core/slice/mod.rs.html#960
@@ -44,8 +44,8 @@ fn partition_oob(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
                 // This is like array.swap, which calls ptr::swap itself,
                 // but we're ignoring the safety regulation of self[x] and self[y].
                 std::ptr::swap(
-                    ptr.add(j),
-                    ptr.add(j+1)
+                    ptr.add(i),
+                    ptr.add(j)
                 );
                 i+=1;
             }
@@ -69,12 +69,12 @@ fn partition_rp(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
     let mut i = low;
     unsafe {
         let mut ptr = array.as_mut_ptr();
-        for j in low..pivot-1 {
-            if ptr.add(j) <= ptr.add(pivot) {
+        for j in low..pivot {
+            if *ptr.add(j) <= *ptr.add(pivot) {
                 // swap(i, j+1)
-                let tmp = *ptr.add(j);
-                *ptr.add(j) = *ptr.add(j+1);
-                *ptr.add(j+1) = tmp;
+                let tmp = *ptr.add(i);
+                *ptr.add(i) = *ptr.add(j);
+                *ptr.add(j) = tmp;
 
                 i+= 1;
             }
@@ -122,4 +122,36 @@ pub fn do_benchmark(array: &mut Vec<Vec<u32>>, method_type : &str) {
     for mut sub_array in array.iter_mut() {
         benchmark(1, || sort(sub_array, 1, sub_array.len()-1, sort_method))
     }
+}
+
+// QUICK SORT TESTS
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sort() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        let len = vec.len();
+        sort(&mut vec, 0, len-1, partition);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+
+    #[test]
+    fn test_sort_oob() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        let len = vec.len();
+        sort(&mut vec, 0, len-1, partition_oob);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+
+
+    #[test]
+    fn test_sort_rptr() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        let len = vec.len();
+        sort(&mut vec, 0, len-1, partition_rp);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+
 }

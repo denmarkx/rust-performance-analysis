@@ -5,7 +5,7 @@ use crate::benchmark::benchmark;
 * Simple matrix multiplication--SAFE.
 * Assumes that mat_a and mat_b are the same dimensions.
 */
-fn matrix_mult(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
+fn matrix_mult(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) -> Vec<Vec<u32>> {
     let count = mat_a.len();
     let mut mat_c = vec![vec![0; count]; count];
 
@@ -16,6 +16,7 @@ fn matrix_mult(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
             }
         }
     }
+    mat_c
 }
 
 /*
@@ -23,7 +24,7 @@ fn matrix_mult(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
 * Assumes that mat_a and mat_b are the same dimensions.
 * (NO OUT OF BOUNDS)
 */
-fn matrix_mult_oob(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
+fn matrix_mult_oob(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) -> Vec<Vec<u32>> {
     let count = mat_a.len();
     let mut mat_c = vec![vec![0; count]; count];
 
@@ -36,6 +37,7 @@ fn matrix_mult_oob(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
             }
         }
     }
+    mat_c
 }
 
 
@@ -44,7 +46,7 @@ fn matrix_mult_oob(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
 * Assumes that mat_a and mat_b are the same dimensions.
 * (RAW POINTERS)
 */
-fn matrix_mult_rp(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
+fn matrix_mult_rp(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) -> Vec<Vec<u32>> {
     let count = mat_a.len();
     let mut mat_c = vec![vec![0; count]; count];
 
@@ -69,6 +71,7 @@ fn matrix_mult_rp(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
             }
         }
     }
+    mat_c
 }
 
 pub fn do_benchmark(
@@ -77,7 +80,7 @@ pub fn do_benchmark(
     mat_b : &Vec<Vec<u32>>,
     method_type : &str) {
 
-    let mat_method : fn(&Vec<Vec<u32>>, &Vec<Vec<u32>>) = match method_type {
+    let mat_method : fn(&Vec<Vec<u32>>, &Vec<Vec<u32>>) -> Vec<Vec<u32>> = match method_type {
         "oob" => matrix_mult_oob,
         "rptr" => matrix_mult_rp,
         &_ => matrix_mult,
@@ -87,3 +90,29 @@ pub fn do_benchmark(
 }
 
 
+// MATRIX MULT TESTS
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mult() {
+        let mut mat_a = vec![vec![1, 2], vec![3, 4]];
+        let mut mat_b = vec![vec![5, 6], vec![7, 8]];
+        assert_eq!(matrix_mult(&mut mat_a, &mut mat_b), vec![vec![19, 22], vec![43, 50]]);
+    }
+
+    #[test]
+    fn test_mult_oob() {
+        let mut mat_a = vec![vec![1, 2], vec![3, 4]];
+        let mut mat_b = vec![vec![5, 6], vec![7, 8]];
+        assert_eq!(matrix_mult_oob(&mut mat_a, &mut mat_b), vec![vec![19, 22], vec![43, 50]]);
+    }
+
+    #[test]
+    fn test_mult_rptr() {
+        let mut mat_a = vec![vec![1, 2], vec![3, 4]];
+        let mut mat_b = vec![vec![5, 6], vec![7, 8]];
+        assert_eq!(matrix_mult_rp(&mut mat_a, &mut mat_b), vec![vec![19, 22], vec![43, 50]]);
+    }
+}

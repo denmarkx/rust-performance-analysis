@@ -63,7 +63,7 @@ fn insertion_sort_rp(array: &mut Vec<u32>) {
     for i in 1..array.len() {
         let mut j = i;
         unsafe {
-            while j > 0 && x.add(j-1) > x.add(j) {
+            while j > 0 && *x.add(j-1) > *x.add(j) {
                 // we could use std::ptr::swap here, but it does a bit more copying.
                 // https://doc.rust-lang.org/src/core/ptr/mod.rs.html#1009
                 let tmp = *x.add(j);
@@ -87,5 +87,33 @@ pub fn do_benchmark(array: &mut Vec<Vec<u32>>, method_type : &str) {
 
     for mut sub_array in array.iter_mut() {
         benchmark(1, || sort_method(sub_array))
+    }
+}
+
+// INSERTION SORT TESTS
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sort() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        insertion_sort(&mut vec);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+
+    #[test]
+    fn test_sort_oob() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        insertion_sort_oob(&mut vec);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+
+
+    #[test]
+    fn test_sort_rptr() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        insertion_sort_rp(&mut vec);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
     }
 }

@@ -88,3 +88,30 @@ pub fn do_benchmark(array: &mut Vec<Vec<u32>>, method_type : &str) {
     }
 }
 
+// QUICK SORT TESTS
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sort() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        bubble_sort(&mut vec);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+
+    #[test]
+    fn test_sort_oob() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        bubble_sort_oob(&mut vec);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+
+
+    #[test]
+    fn test_sort_rptr() {
+        let mut vec = vec![4, 7, 1, 3, 8, 6, 5, 2];
+        bubble_sort_rp(&mut vec);
+        assert_eq!(vec, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+    }
+}
