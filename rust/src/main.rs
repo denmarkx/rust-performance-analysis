@@ -84,7 +84,8 @@ fn main() {
         if algorithm == "matrix" {
             // Let's make use args.inner_length is NOT 0.
             if args.inner_length == 0 {
-                panic!("Inner Length argument must be non-zero and positive for matrix multiplication.");
+                eprintln!("--inner-length argument must be non-zero and postive for matrix multiplication.");
+                process::exit(1);
             }
 
             array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length);
