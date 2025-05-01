@@ -38,7 +38,7 @@ struct Args {
 
     /// algorithm to benchmark
     #[argh(option, short = 'a', from_str_fn(validate_algorithm))]
-    algorithm: Option<String>,
+    algorithm: String,
 
     /// runs the unsafe version
     #[argh(switch, short = 'u')]
@@ -66,7 +66,7 @@ fn validate_algorithm(value: &str) -> Result<String, String> {
 fn main() {
     // args:
     let args : Args = argh::from_env();
-    let algorithm: String = args.algorithm.unwrap();
+    let algorithm: String = args.algorithm;
 
     // Arrays:
     let mut array: Vec<Vec<u32>> = vec![];
