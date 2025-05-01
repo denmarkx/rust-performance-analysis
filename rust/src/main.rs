@@ -13,6 +13,7 @@ mod benchmark;
 // STD:
 use std::fs::read_to_string;
 use std::path::Path;
+use std::process;
 
 // Argument Parsing:
 use argh::FromArgs;
@@ -58,7 +59,10 @@ fn validate_algorithm(value: &str) -> Result<String, String> {
         "bubble" => {},
         "quick" => {},
         "matrix" => {},
-        &_ => panic!("Invalid algorithm specified."),
+        &_ => { 
+            eprintln!("Invalid argument specified! Use: [insertion, bubble, quick, matrix]");
+            process::exit(1);
+            },
     };
     Ok(String::from(value))
 }
