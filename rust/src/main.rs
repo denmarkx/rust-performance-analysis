@@ -149,7 +149,7 @@ fn read_from_file(filename: &str) -> Vec<Vec<u32>> {
             child_vec.push(part.parse::<u32>().unwrap());
             i += 1;
         }
-        array.push(child_vec.clone());
+        array.push(child_vec);
     }
     array
 }
