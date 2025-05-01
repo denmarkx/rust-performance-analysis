@@ -44,14 +44,14 @@ fn matrix_mult_unsafe(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
 */
 pub fn do_benchmark(
 	benchmark_times : usize,
-	mut mat_a : Vec<Vec<u32>>,
-	mut mat_b : Vec<Vec<u32>>,
+	mut mat_a : &mut Vec<Vec<u32>>,
+	mut mat_b : &mut Vec<Vec<u32>>,
 	use_unsafe : bool) {
 
 	// Choose which to benchmark:
 	if use_unsafe {
-    	benchmark(benchmark_times, || matrix_mult_unsafe(&mut mat_a, &mut mat_b));
+    	benchmark(benchmark_times, || matrix_mult_unsafe(mat_a, mat_b));
     } else {
-    	benchmark(benchmark_times, || matrix_mult(&mut mat_a, &mut mat_b));
+    	benchmark(benchmark_times, || matrix_mult(mat_a, mat_b));
     }
 }

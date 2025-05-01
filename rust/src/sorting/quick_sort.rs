@@ -71,8 +71,8 @@ fn sort(array: &mut Vec<u32>, low: usize, high: usize, use_unsafe : bool) {
 *
 * If use_unsafe, it'll benchmark sort_unsafe and partition_unsafe.
 */
-pub fn do_benchmark(array: Vec<Vec<u32>>, use_unsafe : bool) {
-    for sub_array in array.iter() {
-        benchmark(1, || sort(&mut sub_array.clone(), 1, sub_array.len()-1, use_unsafe));
+pub fn do_benchmark(array: &mut Vec<Vec<u32>>, use_unsafe : bool) {
+    for sub_array in array.iter_mut() {
+        benchmark(1, || sort(sub_array, 1, sub_array.len()-1, use_unsafe));
     }
 }

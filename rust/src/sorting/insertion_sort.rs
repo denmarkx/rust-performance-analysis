@@ -5,7 +5,7 @@ use crate::benchmark::benchmark;
 * INSERTION SORT: SAFE
 *
 */
-fn insertion_sort(array: &mut [u32]) {
+fn insertion_sort(array: &mut Vec<u32>) {
     // Start with 2nd item:
     for i in 1..array.len() {
         let n = array[i];
@@ -27,7 +27,7 @@ fn insertion_sort(array: &mut [u32]) {
 * INSERTION SORT: UNSAFE
 *
 */
-fn insertion_sort_unsafe(array: &mut [u32]) {
+fn insertion_sort_unsafe(array: &mut Vec<u32>) {
     // Start with 2nd item:
     unsafe {
         for i in 1..array.len() {
@@ -49,12 +49,12 @@ fn insertion_sort_unsafe(array: &mut [u32]) {
 /*
 * start_sort: accepts 2D array and benchmarks per each iteration.
 */
-pub fn do_benchmark(array: Vec<Vec<u32>>, use_unsafe : bool) {
-    for sub_array in array.iter() {
+pub fn do_benchmark(array: &mut Vec<Vec<u32>>, use_unsafe : bool) {
+    for mut sub_array in array.iter_mut() {
         if use_unsafe {
-            benchmark(1, || insertion_sort_unsafe(&mut sub_array.clone()));
+            benchmark(1, || insertion_sort_unsafe(sub_array));
         } else {
-            benchmark(1, || insertion_sort(&mut sub_array.clone()));
+            benchmark(1, || insertion_sort(sub_array));
         }
     }
 }

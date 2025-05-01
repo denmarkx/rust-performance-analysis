@@ -109,12 +109,12 @@ fn main() {
     // algorithm is required so we can safely unwrap.
     match algorithm.as_str() {
         // SORTING:
-        "insertion" => insertion_sort::do_benchmark(array, args.use_unsafe),
-        "bubble" => bubble_sort::do_benchmark(array, args.use_unsafe),
-        "quick" => quick_sort::do_benchmark(array, args.use_unsafe),
+        "insertion" => insertion_sort::do_benchmark(&mut array, args.use_unsafe),
+        "bubble" => bubble_sort::do_benchmark(&mut array, args.use_unsafe),
+        "quick" => quick_sort::do_benchmark(&mut array, args.use_unsafe),
 
         // MATH:
-        "matrix" => matrix_mult::do_benchmark(args.n_iter, array, array2, args.use_unsafe),
+        "matrix" => matrix_mult::do_benchmark(args.n_iter, &mut array, &mut array2, args.use_unsafe),
 
         // UNIMPLEMENTED:
         &_ => todo!("algorithm: {}", algorithm),

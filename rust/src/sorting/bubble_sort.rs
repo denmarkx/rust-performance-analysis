@@ -6,7 +6,7 @@ use crate::benchmark::benchmark;
 *
 */
 #[inline(never)]
-fn bubble_sort(array: &mut[u32]) {
+fn bubble_sort(array: &mut Vec<u32>) {
     // Bubble Sort Implementation:
     for _i in 0..array.len() {
         for j in 0..array.len()-1 {
@@ -27,7 +27,7 @@ fn bubble_sort(array: &mut[u32]) {
 * ..will need to re-adapt and split up later.
 *
 */
-fn bubble_sort_unsafe(array: &mut[u32]) {
+fn bubble_sort_unsafe(array: &mut Vec<u32>) {
     // Bubble Sort Implementation:
     unsafe {
         let mut ptr = array.as_mut_ptr();
@@ -47,12 +47,12 @@ fn bubble_sort_unsafe(array: &mut[u32]) {
 /*
 * start_sort: accepts 2D array and benchmarks per each iteration.
 */
-pub fn do_benchmark(array: Vec<Vec<u32>>, use_unsafe : bool) {
-    for sub_array in array.iter() {
+pub fn do_benchmark(array: &mut Vec<Vec<u32>>, use_unsafe : bool) {
+    for sub_array in array.iter_mut() {
         if use_unsafe {
-            benchmark(1, || bubble_sort_unsafe(&mut sub_array.clone()));
+            benchmark(1, || bubble_sort_unsafe(sub_array));
         } else {
-            benchmark(1, || bubble_sort(&mut sub_array.clone()));
+            benchmark(1, || bubble_sort(sub_array));
         }
     }
 }
