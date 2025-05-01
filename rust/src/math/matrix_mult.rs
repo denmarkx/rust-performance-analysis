@@ -5,7 +5,7 @@ use crate::benchmark::benchmark;
 * Simple matrix multiplication--SAFE.
 * Assumes that mat_a and mat_b are the same dimensions.
 */
-fn matrix_mult(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
+fn matrix_mult(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
     let count = mat_a.len();
     let mut mat_c = vec![vec![0; count]; count];
 
@@ -23,7 +23,7 @@ fn matrix_mult(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
 * Assumes that mat_a and mat_b are the same dimensions.
 * (NO OUT OF BOUNDS)
 */
-fn matrix_mult_oob(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
+fn matrix_mult_oob(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
     let count = mat_a.len();
     let mut mat_c = vec![vec![0; count]; count];
 
@@ -44,7 +44,7 @@ fn matrix_mult_oob(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
 * Assumes that mat_a and mat_b are the same dimensions.
 * (RAW POINTERS)
 */
-fn matrix_mult_rp(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
+fn matrix_mult_rp(mat_a: &Vec<Vec<u32>>, mat_b: &Vec<Vec<u32>>) {
     let count = mat_a.len();
     let mut mat_c = vec![vec![0; count]; count];
 
@@ -73,11 +73,11 @@ fn matrix_mult_rp(mat_a: &mut Vec<Vec<u32>>, mat_b: &mut Vec<Vec<u32>>) {
 
 pub fn do_benchmark(
     benchmark_times : usize,
-    mut mat_a : &mut Vec<Vec<u32>>,
-    mut mat_b : &mut Vec<Vec<u32>>,
+    mat_a : &Vec<Vec<u32>>,
+    mat_b : &Vec<Vec<u32>>,
     method_type : &str) {
 
-    let mat_method : fn(&mut Vec<Vec<u32>>, &mut Vec<Vec<u32>>) = match method_type {
+    let mat_method : fn(&Vec<Vec<u32>>, &Vec<Vec<u32>>) = match method_type {
         "oob" => matrix_mult_oob,
         "rptr" => matrix_mult_rp,
         &_ => matrix_mult,
