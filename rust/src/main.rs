@@ -3,8 +3,9 @@ mod sorting { pub mod bubble_sort; pub mod quick_sort; pub mod insertion_sort; }
 use sorting::{bubble_sort, quick_sort, insertion_sort};
 
 // MATH:
-mod math { pub mod matrix_mult; }
+mod math { pub mod matrix_mult; pub mod sum; }
 use math::{matrix_mult};
+use math::{sum};
 
 // UTIL:
 mod random_value;
@@ -59,8 +60,9 @@ fn validate_algorithm(value: &str) -> Result<String, String> {
         "bubble" => {},
         "quick" => {},
         "matrix" => {},
+        "sum" => {},
         &_ => { 
-            eprintln!("Invalid argument specified! Use: [insertion, bubble, quick, matrix]");
+            eprintln!("Invalid argument specified! Use: [insertion, bubble, quick, matrix, sum]");
             process::exit(1);
             },
     };
@@ -68,11 +70,14 @@ fn validate_algorithm(value: &str) -> Result<String, String> {
 }
 
 fn validate_unsafe_type(value: &str) -> Result<String, String> {
+    // "vectorization" is obviously not unsafe, but it's the only way we're going
+    // to identify it atm.
     match value {
         "oob" => {},
         "rptr" => {},
+        "vectorization" => {},
         &_ => {
-            eprintln!("Invalid argument to --unsafe-type! Use: [oob, rptr]");
+            eprintln!("Invalid argument to --unsafe-type! Use: [oob, rptr].\n\tIf --algorithm is sum, use: [vectorization].");
             process::exit(1);
             },
     };
@@ -132,6 +137,7 @@ fn main() {
 
         // MATH:
         "matrix" => matrix_mult::do_benchmark(args.n_iter, &array, &array2, &args.unsafe_type),
+        "sum" => sum::do_benchmark(&array, &args.unsafe_type),
 
         // UNIMPLEMENTED:
         &_ => todo!("algorithm: {}", algorithm),
