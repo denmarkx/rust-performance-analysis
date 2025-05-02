@@ -1,3 +1,4 @@
 seaborn
 polars
 great_tables
+matplotlib
