@@ -1,5 +1,6 @@
 *.exe
 *.o
+*.pdb
 
 # Juypter Directories
 .ipynb*
