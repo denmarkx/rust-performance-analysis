@@ -128,7 +128,7 @@ static inline void end_benchmark() {
 * Averages the benchmark totals and frees the array.
 * Does nothing if benchmark_count is 0 or 1.
 */
-static inline void complete_benchmark(char* algorithm) {
+static inline void complete_benchmark(const char* algorithm) {
     // This just means that we didnt provide additional argument when running the program.
     if (benchmark_count <= 1) {
         return;
