@@ -7,7 +7,7 @@ int* random_value(int a, int b, int c) {
     srand(time(NULL));
     assert(a < b);
 
-    int *array = malloc(c * sizeof(int));
+    int *array = (int*)malloc(c * sizeof(int));
     for (int i = 0; i < c; i++) {
         array[i] = rand() % (b + 1 - a) + a;
     }
@@ -37,7 +37,7 @@ ArrayData random_value_set(int a, int b, int c, int rand_length) {
     data.arr_size = c;
 
     // Pre-determine our individual array lengths:
-    int* count_arr = malloc(c * sizeof(int));
+    int* count_arr = (int*)malloc(c * sizeof(int));
     for (int i = 0; i < c; i++) {
         // Random length:
         length = rand_length;
@@ -48,7 +48,7 @@ ArrayData random_value_set(int a, int b, int c, int rand_length) {
     }
 
     // proper initialization of 2d array:
-    int** array = malloc(sizeof(*array) * c);
+    int** array = (int**)malloc(sizeof(*array) * c);
     int* sub_array = NULL;
 
     // get c number of arrays.

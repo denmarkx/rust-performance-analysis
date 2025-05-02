@@ -20,9 +20,9 @@
 #endif
 
 // no strlwr on osx.
-char* to_lower(char* str) {
+char* to_lower(const char* str) {
     size_t len = strlen(str);
-    char* n_str = malloc(len * sizeof(char));
+    char* n_str = (char*)malloc(len * sizeof(char));
 
     for (int i = 0; i < len; i++) {
         n_str[i] = tolower(str[i]);
@@ -52,7 +52,7 @@ ssize_t read_line(char** lineptr, size_t* n, FILE* stream) {
     // allocate for lineptr
     if (*lineptr == NULL || *n == 0) {
         *n = 128;  // Initial buffer size
-        *lineptr = malloc(*n);
+        *lineptr = (char*)malloc(*n);
         if (*lineptr == NULL) return -1;
     }
 
@@ -61,7 +61,7 @@ ssize_t read_line(char** lineptr, size_t* n, FILE* stream) {
         // quick buffer expansion. we'll actually double the size.
         if (len + 1 >= *n) {
             *n *= 2;
-            char* temp = realloc(*lineptr, *n);
+            char* temp = (char*)realloc(*lineptr, *n);
             if (!temp) {
                 return -1;
             }
@@ -102,8 +102,8 @@ ArrayData read_from_file(char* file_name) {
         while (read_line(&line, &len, file) != -1) {
             line_count++;
         }
-        array = malloc(line_count * sizeof(*array));
-        count_arr = malloc(line_count * sizeof(int));
+        array = (int**)malloc(line_count * sizeof(*array));
+        count_arr = (int*)malloc(line_count * sizeof(int));
         rewind(file);
 
         while (read_line(&line, &len, file) != -1) {
@@ -111,7 +111,7 @@ ArrayData read_from_file(char* file_name) {
             token = STRTOK(line, " \n", &n_token);
 
             // First token is the array size:
-            child_array = malloc(atoi(token) * sizeof(int));
+            child_array = (int*)malloc(atoi(token) * sizeof(int));
 
             // Then that gets put in our count_arr:
             count_arr[i] = atoi(token);
@@ -174,7 +174,7 @@ typedef struct Args {
     unsigned int r_min;
     unsigned int r_max;
     unsigned int n_iter;
-    char* algorithm;
+    const char* algorithm;
     unsigned int inner_length;
 } Args;
 

@@ -58,7 +58,8 @@ static double *benchmark_totals = NULL;
 */
 static inline void setup_benchmark(int count) {
     if (count > 0) {
-        benchmark_totals = malloc(sizeof(double) * count);
+        // no implicit convesion in cxx
+        benchmark_totals = (double*)malloc(sizeof(double) * count);
     }
 }
 
