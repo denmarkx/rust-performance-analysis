@@ -1,11 +1,13 @@
+#![feature(portable_simd)]
+
 // SORTING:
 mod sorting { pub mod bubble_sort; pub mod quick_sort; pub mod insertion_sort; }
 use sorting::{bubble_sort, quick_sort, insertion_sort};
 
 // MATH:
-mod math { pub mod matrix_mult; pub mod sum; }
+mod math { pub mod matrix_mult; pub mod elementary_ops; }
 use math::{matrix_mult};
-use math::{sum};
+use math::{elementary_ops};
 
 // UTIL:
 mod random_value;
@@ -60,7 +62,7 @@ fn validate_algorithm(value: &str) -> Result<String, String> {
         "bubble" => {},
         "quick" => {},
         "matrix" => {},
-        "sum" => {},
+        "elemops" => {},
         &_ => { 
             eprintln!("Invalid argument specified! Use: [insertion, bubble, quick, matrix, sum]");
             process::exit(1);
@@ -137,7 +139,7 @@ fn main() {
 
         // MATH:
         "matrix" => matrix_mult::do_benchmark(args.n_iter, &array, &array2, &args.unsafe_type),
-        "sum" => sum::do_benchmark(&array, &args.unsafe_type),
+        "elemops" => elementary_ops::do_benchmark(&mut array, &args.unsafe_type),
 
         // UNIMPLEMENTED:
         &_ => todo!("algorithm: {}", algorithm),
