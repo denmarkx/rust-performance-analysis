@@ -24,7 +24,7 @@ char* to_lower(const char* str) {
     size_t len = strlen(str);
     char* n_str = (char*)malloc(len * sizeof(char));
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i <= len; i++) {
         n_str[i] = tolower(str[i]);
     }
 
