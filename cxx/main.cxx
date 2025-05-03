@@ -11,7 +11,9 @@ extern "C" {
     #include "random_value.c"
 }
 
-#include "sorting/insertion.cxx"
+#include "insertion_sort.cxx"
+#include "bubble_sort.cxx"
+#include "quick_sort.cxx"
 
 // Algorithm -> Function "router"
 typedef struct AlgoFuncHldr {
@@ -21,8 +23,8 @@ typedef struct AlgoFuncHldr {
 
 AlgoFuncHldr AFRouter [] = {
     {"insertion", insertion_sort},
-    // {"quick", start_quick_sort},
-    // {"bubble", bubble_sort},
+    {"quick", start_quick_sort},
+    {"bubble", bubble_sort},
 };
 
 // Minimized version of c/util::ArrayData
