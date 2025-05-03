@@ -90,9 +90,9 @@ static inline void end_benchmark() {
     * Writes header row to CSV.
     */
     void write_csv_headers(FILE* f) {
-        char* headers[3] = {"TIME_NS", "TIME_MS", "TIME_S"};
+        const char* headers[3] = {"TIME_NS", "TIME_MS", "TIME_S"};
         for (int i = 0; i < 3; i++) {
-            char* header = headers[i];
+            const char* header = headers[i];
             csv_fwrite(f, header, strlen(header));
             fputc(',', f);
         }
