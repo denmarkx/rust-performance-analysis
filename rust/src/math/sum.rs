@@ -12,7 +12,7 @@ use crate::benchmark::benchmark;
 fn sum(data: &Vec<u32>, data2: &Vec<u32>) -> u32 {
     let mut n = 0u32;
     for i in 1..data.len() {
-        n = data[i] + data2[i-1];
+        n += data[i] + data2[i-1];
     }
     n
 }
@@ -33,7 +33,7 @@ fn sum_vectorization(data: &Vec<u32>, data2: &Vec<u32>) -> u32 {
         // the sorting/.._oob functions sort a vector in place and we're not
         // interacting with two value-different (well not really [see: do_benchmark], but the
         // compiler doesn't know that from this function) containers.
-        n = unsafe { data.get_unchecked(i) + data2.get_unchecked(i-1) };
+        n += unsafe { data.get_unchecked(i) + data2.get_unchecked(i-1) };
     }
     n
 }

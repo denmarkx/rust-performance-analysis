@@ -6,7 +6,7 @@
 pub fn update(data: &Vec<u32>, data2: &Vec<u32>) -> u32 {
     let mut n = 0u32;
     for i in 1..data.len() {
-        n = data[i] * data2[i-1];
+        n += data[i] * data2[i-1];
     }
     n
 }
@@ -17,7 +17,7 @@ pub fn update(data: &Vec<u32>, data2: &Vec<u32>) -> u32 {
 pub fn update(data: &Vec<u32>, data2: &Vec<u32>) -> u32 {
     let mut n = 0u32;
     for i in 1..data.len() {
-        n = unsafe { data.get_unchecked(i) * data2.get_unchecked(i-1) };
+        n += unsafe { data.get_unchecked(i) * data2.get_unchecked(i-1) };
     }
     n
 }
