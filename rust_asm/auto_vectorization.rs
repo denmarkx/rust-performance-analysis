@@ -2,22 +2,25 @@
 
 #[inline(never)]
 #[cfg(not(vectorization))]
-// no simd instructions.
-pub fn update(data: &Vec<u32>, data2: &Vec<u32>) -> u32 {
-    let mut n = 0u32;
-    for i in 1..data.len() {
-        n += data[i] * data2[i-1];
+pub fn update(data: &mut Vec<u32>, data2: &Vec<u32>) -> u32 {
+    let mut n  = 0u32;
+    for i in 1..data.len()/2 {
+        data[i*2] += data2[i-1] * data[i] * 2;
+        n += data[i];
     }
     n
 }
 
+// TODO: rewite using std::simd
 #[inline(never)]
-#[cfg(vectorization)]
-// movdqa
-pub fn update(data: &Vec<u32>, data2: &Vec<u32>) -> u32 {
+pub fn update(data: &mut Vec<u32>, data2: &mut Vec<u32>) -> u32 {
     let mut n = 0u32;
-    for i in 1..data.len() {
-        n += unsafe { data.get_unchecked(i) * data2.get_unchecked(i-1) };
+    unsafe {
+        let data_slice = &mut data[0..data2.len()];
+        for i in 1..data2.len() {
+            data_slice[i] += data2.get_unchecked(i-1) * data_slice[i];
+            n *= data_slice[i];
+        }
     }
     n
 }

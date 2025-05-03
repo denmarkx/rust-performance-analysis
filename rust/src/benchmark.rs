@@ -41,15 +41,16 @@ pub fn complete_benchmark(algorithm : &str) {
 
 fn write(algorithm: &str) -> Result<(), Box<dyn error::Error>> {
     let mut wtr = csv::Writer::from_path(algorithm.to_owned() + ".csv")?;
-    wtr.write_record(&["TIME_NS", "TIME_MS", "TIME_S"])?;
+    wtr.write_record(&["TIME_MCS", "TIME_NS", "TIME_MS", "TIME_S"])?;
 
     // unwrap from mutex and iter the Vec<Duration>
     // row # is technically the iteration, so we won't enumerate.
     for t in TIMES.lock().unwrap().iter() {
+        let micro : u128 = t.as_micros();
         let nano : u128 = t.as_nanos();
         let millis : u128 = t.as_millis();
         let seconds : f64 = t.as_secs_f64();
-        wtr.write_record(&[nano.to_string(), millis.to_string(), seconds.to_string()])?;
+        wtr.write_record(&[micro.to_string(), nano.to_string(), millis.to_string(), seconds.to_string()])?;
     }
     wtr.flush();
     Ok(())
