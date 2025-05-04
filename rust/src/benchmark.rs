@@ -3,6 +3,8 @@ use std::time::Duration;
 use lazy_static::lazy_static;
 use std::sync::Mutex;
 use std::{io, error};
+use csv::Writer;
+use std::fs::File;
 
 const AVERAGE_ONLY : bool = false;
 
@@ -30,17 +32,20 @@ pub fn benchmark<F: FnMut() -> T, T>(n : usize, mut f: F) {
     }
 }
 
-pub fn complete_benchmark(algorithm : &str) {
+pub fn complete_benchmark(algorithm : &str, unsafe_type : &str) {
     // Average time:
     let sum : Duration = TIMES.lock().unwrap().iter().sum();
     let count = TIMES.lock().unwrap().len() as u32;
     let average = sum / count;
     println!("Average Time: {:.2?}", average);
-    write(algorithm);
+    write(algorithm, unsafe_type);
 }
 
-fn write(algorithm: &str) -> Result<(), Box<dyn error::Error>> {
+fn write(algorithm: &str, unsafe_type: &str) -> Result<(), Box<dyn error::Error>> {
     let mut wtr = csv::Writer::from_path(algorithm.to_owned() + ".csv")?;
+    if !unsafe_type.is_empty() {
+        let wrt = csv::Writer::from_path(algorithm.to_owned() + "_" + &unsafe_type.to_uppercase() + "_UNSAFE.csv")?;
+    }
     wtr.write_record(&["TIME_MCS", "TIME_NS", "TIME_MS", "TIME_S"])?;
 
     // unwrap from mutex and iter the Vec<Duration>

@@ -147,7 +147,7 @@ fn main() {
 
     // This spits out some useful info like avg. time and it
     // also writes to CSV.
-    benchmark::complete_benchmark(&algorithm.as_str());
+    benchmark::complete_benchmark(&algorithm.as_str(), &args.unsafe_type.as_str());
 }
 
 /*

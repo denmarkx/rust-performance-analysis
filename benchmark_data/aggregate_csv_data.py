@@ -3,10 +3,15 @@ Combines several CSVs generated from rust/src/benchmark.rs and c/benchmark.c
 to a single one to make the import process into Polars easier.
 """
 from pathlib import Path
-import csv, sys, polars
+import csv, sys, polars, argparse
 
-DATA_TYPE = "bubble"
-WANT_UNSAFE_RUST = False
+parser = argparse.ArgumentParser()
+parser.add_argument("-a", "--algorithm", type=str, required=True)
+parser.add_argument("-u", "--unsafe", action="store_true")
+args = parser.parse_args()
+
+DATA_TYPE = args.algorithm.lower()
+WANT_UNSAFE_RUST = args.unsafe
 
 SORTING_FILES = [
     "bubble",
@@ -17,6 +22,10 @@ SORTING_FILES = [
 MATH_FILES = [
     "matrix",
 ]
+
+if DATA_TYPE not in SORTING_FILES + MATH_FILES:
+    print ("Invalid algoirthm. [bubble, insertion, quick, matrix]")
+    sys.exit(1)
 
 csv_file = open(f"{DATA_TYPE}-{sys.platform}.csv", "w+")
 writer = csv.writer(csv_file, lineterminator="\n")
@@ -52,7 +61,7 @@ for file in Path("../").rglob("*.csv"):
             # for rust, we are suffixed by RAW and OOB if we end with unsafe.
             header = "RUST"
             if file.name.endswith("UNSAFE.csv"):
-                header = file.name.split("_")[1]
+                header += "_" + file.name.split("_")[1]
 
         # Each file has the headers of TIME_NS, TIME_MS, TIME_S.
         with open(file, "r") as f:
