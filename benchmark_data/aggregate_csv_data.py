@@ -3,10 +3,10 @@ Combines several CSVs generated from rust/src/benchmark.rs and c/benchmark.c
 to a single one to make the import process into Polars easier.
 """
 from pathlib import Path
-import csv, sys
+import csv, sys, polars
 
 DATA_TYPE = "bubble"
-WANT_UNSAFE_RUST = True
+WANT_UNSAFE_RUST = False
 
 SORTING_FILES = [
     "bubble",
@@ -31,9 +31,9 @@ if DATA_TYPE in SORTING_FILES:
 CSV_DATA = {header: [] for header in headers}
 MAX_LEN_ROW = 0
 
-for file in Path(".").rglob("*.csv"):
+for file in Path("../").rglob("*.csv"):
     ext = file.parent.name
-    if ext not in ["c", "rust"]:
+    if ext not in ["c", "cxx", "rust"]:
         continue
 
     # Unsafe Rust's CSV names are outputted as: <...>_<RAW|OOB>_UNSAFE.csv.
@@ -59,7 +59,7 @@ for file in Path(".").rglob("*.csv"):
             reader = csv.reader(f)
 
             # though we only really care about seconds.
-            seconds = [float(row[2]) for row in list(reader)[1:]]
+            seconds = [float(row[-1]) for row in list(reader)[1:]]
             CSV_DATA[header] = seconds
 
             if len(seconds) > MAX_LEN_ROW:
@@ -78,3 +78,5 @@ for row_index in range(MAX_LEN_ROW):
     row = [col[row_index] for col in csv_values]
     writer.writerow(row)
 csv_file.close()
+
+polars.read_csv(f"{DATA_TYPE}-{sys.platform}.csv").write_parquet(f"{DATA_TYPE}-{sys.platform}.parquet")
