@@ -39,7 +39,7 @@ static inline double get_time() {
 
     uint64_t time = mach_absolute_time();
     // Convert to seconds
-    return (double)time * timebase.numer / timebase.denom;
+    return (double)time * timebase.numer / timebase.denom / 1e9;
 }
 #endif
 
@@ -104,7 +104,7 @@ static inline void end_benchmark() {
     * Writes non-header row to CSV.
     */
     void write_csv(FILE* f, double value) {
-        char str[15];
+        char str[25];
 
         // NS:
         sprintf(str, "%f", value * 1e+9);
