@@ -12,10 +12,10 @@
 #include <windows.h>
 #include <winnt.h>
 
+static int FREQ_INITIALIZED = 0;
 static LARGE_INTEGER f;
-double get_time() {
-    static int FREQ_INITIALIZED = 0;
 
+static inline double get_time() {
     // cache the frequency
     if (!FREQ_INITIALIZED) {
         QueryPerformanceFrequency(&f);
@@ -28,7 +28,7 @@ double get_time() {
 }
 #elif defined(__APPLE__)
 #include <mach/mach_time.h>
-double get_time() {
+static inline double get_time() {
     static mach_timebase_info_data_t timebase;
     static int TIMEBASE_INITIALIZED = 0;
 
@@ -39,7 +39,7 @@ double get_time() {
 
     uint64_t time = mach_absolute_time();
     // Convert to seconds
-    return (double)time * timebase.numer / timebase.denom / 1e9;
+    return (double)time * timebase.numer / timebase.denom;
 }
 #endif
 
@@ -107,17 +107,17 @@ static inline void end_benchmark() {
         char str[15];
 
         // NS:
-        sprintf(str, "%f", value * 1000000);
+        sprintf(str, "%f", value * 1e+9);
         csv_fwrite(f, str, strlen(str));
         fputc(',', f);
 
         // MS:
-        sprintf(str, "%f", value);
+        sprintf(str, "%f", value * 1000);
         csv_fwrite(f, str, strlen(str));
         fputc(',', f);
 
         // S:
-        sprintf(str, "%f", value / 1000);
+        sprintf(str, "%f", value);
         csv_fwrite(f, str, strlen(str));
         fputc('\n', f);
     }

@@ -5,6 +5,7 @@ edition = "2024"
 
 [profile.release]
 opt-level=3
+lto = true
 
 [dependencies]
 rand = "0.9"
