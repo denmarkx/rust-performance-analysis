@@ -34,7 +34,7 @@ headers = []
 if DATA_TYPE in SORTING_FILES:
     headers = ["CXX", "C", "RUST"]
     if WANT_UNSAFE_RUST:
-        headers += ["RUST_RAW", "RUST_OOB"]
+        headers += ["RUST_RPTR", "RUST_OOB"]
     writer.writerow(headers)
 
 CSV_DATA = {header: [] for header in headers}
@@ -45,7 +45,7 @@ for file in Path("../").rglob("*.csv"):
     if ext not in ["c", "cxx", "rust"]:
         continue
 
-    # Unsafe Rust's CSV names are outputted as: <...>_<RAW|OOB>_UNSAFE.csv.
+    # Unsafe Rust's CSV names are outputted as: <...>_<RPTR|OOB>_UNSAFE.csv.
     if file.name.startswith(DATA_TYPE):
         # TODO: unsafe rust files
         if file.name.endswith("UNSAFE.csv") and not WANT_UNSAFE_RUST:
@@ -58,7 +58,7 @@ for file in Path("../").rglob("*.csv"):
         elif ext in ("cxx", "cpp"):
             header = "CXX"
         else:
-            # for rust, we are suffixed by RAW and OOB if we end with unsafe.
+            # for rust, we are suffixed by RPTR and OOB if we end with unsafe.
             header = "RUST"
             if file.name.endswith("UNSAFE.csv"):
                 header += "_" + file.name.split("_")[1]

@@ -44,7 +44,7 @@ pub fn complete_benchmark(algorithm : &str, unsafe_type : &str) {
 fn write(algorithm: &str, unsafe_type: &str) -> Result<(), Box<dyn error::Error>> {
     let mut wtr = csv::Writer::from_path(algorithm.to_owned() + ".csv")?;
     if !unsafe_type.is_empty() {
-        let wrt = csv::Writer::from_path(algorithm.to_owned() + "_" + &unsafe_type.to_uppercase() + "_UNSAFE.csv")?;
+        wtr = csv::Writer::from_path(algorithm.to_owned() + "_" + &unsafe_type.to_uppercase() + "_UNSAFE.csv")?;
     }
     wtr.write_record(&["TIME_MCS", "TIME_NS", "TIME_MS", "TIME_S"])?;
 
