@@ -5,6 +5,7 @@ use std::sync::Mutex;
 use std::{io, error};
 use csv::Writer;
 use std::fs::File;
+use std::path::Path;
 
 const AVERAGE_ONLY : bool = false;
 
@@ -42,10 +43,11 @@ pub fn complete_benchmark(algorithm : &str, unsafe_type : &str) {
 }
 
 fn write(algorithm: &str, unsafe_type: &str) -> Result<(), Box<dyn error::Error>> {
-    let mut wtr = csv::Writer::from_path(algorithm.to_owned() + ".csv")?;
+    let mut path = algorithm.to_owned() + ".csv";
     if !unsafe_type.is_empty() {
-        wtr = csv::Writer::from_path(algorithm.to_owned() + "_" + &unsafe_type.to_uppercase() + "_UNSAFE.csv")?;
+        path = algorithm.to_owned() + "_" + &unsafe_type.to_uppercase() + "_UNSAFE.csv";
     }
+    let mut wtr = csv::Writer::from_path(path)?;
     wtr.write_record(&["TIME_MCS", "TIME_NS", "TIME_MS", "TIME_S"])?;
 
     // unwrap from mutex and iter the Vec<Duration>
