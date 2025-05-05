@@ -28,7 +28,6 @@ fn bubble_sort(array: &mut Vec<u32>) {
 fn bubble_sort_oob(array: &mut Vec<u32>) {
     // Bubble Sort Implementation:
     unsafe {
-        let ptr = array.as_mut_ptr();
         for _i in 0..array.len() {
             for j in 0..array.len()-1 {
                 if array.get_unchecked(j) > array.get_unchecked(j+1) {
@@ -54,12 +53,10 @@ fn bubble_sort_rp(array: &mut Vec<u32>) {
 
         for _i in 0..array.len() {
             for j in 0..array.len()-1 {
-                if *ptr.add(j) > *ptr.add(j + 1) {
-                    // Previously we did ptr::swap, but we'll try and now let that be OOB's thing.
-                    // See also: https://doc.rust-lang.org/src/core/ptr/mod.rs.html#1009
-                    let tmp = *ptr.add(j);
-                    *ptr.add(j) = *ptr.add(j+1);
-                    *ptr.add(j+1) = tmp;
+                let a = ptr.add(j);
+                let b = ptr.add(j + 1);
+                if *a > *b {
+                    std::ptr::swap(a, b);
                 }
             }
         }

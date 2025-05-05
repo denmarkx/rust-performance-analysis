@@ -4,7 +4,6 @@
 
 // Util for returning random values between a, b for len c.
 int* random_value(int a, int b, int c) {
-    srand(time(NULL));
     assert(a < b);
 
     int *array = (int*)malloc(c * sizeof(int));
@@ -27,6 +26,7 @@ int* random_value(int a, int b, int c) {
 */
 
 ArrayData random_value_set(int a, int b, int c, int rand_length) {
+    srand(time(NULL));
     ArrayData data;
 
     if (rand_length != 0) {
@@ -48,7 +48,7 @@ ArrayData random_value_set(int a, int b, int c, int rand_length) {
     }
 
     // proper initialization of 2d array:
-    int** array = (int**)malloc(sizeof(*array) * c);
+    int** array = (int**)malloc(c * sizeof(int*));
     int* sub_array = NULL;
 
     // get c number of arrays.

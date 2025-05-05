@@ -171,9 +171,9 @@ int use_random_values(char* argv) {
 */
 typedef struct Args {
     char* file;
-    unsigned int r_min;
-    unsigned int r_max;
-    unsigned int n_iter;
+    int r_min;
+    int r_max;
+    int n_iter;
     const char* algorithm;
     unsigned int inner_length;
 } Args;
