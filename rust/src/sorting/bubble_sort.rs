@@ -33,17 +33,7 @@ fn bubble_sort_oob(array: &mut Vec<u32>) {
             for j in 0..array.len()-1 {
                 if array.get_unchecked(j) > array.get_unchecked(j+1) {
                     // array.swap(j, j+1);
-                    // https://doc.rust-lang.org/src/core/slice/mod.rs.html#960
-                    // there exists swap_unchecked, but in nightly builds only.
-                    // like insertion_sort, we can use raw pointers since that's
-                    // the negation of OOB under the hood.
-                    // 
-                    // This is like array.swap, which calls ptr::swap itself,
-                    // but we're ignoring the safety regulation of self[x] and self[y].
-                    std::ptr::swap(
-                        ptr.add(j),
-                        ptr.add(j+1)
-                    )
+                    array.swap_unchecked(j, j+1);
                 }
             }
         }

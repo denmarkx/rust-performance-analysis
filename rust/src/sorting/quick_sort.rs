@@ -27,33 +27,20 @@ fn partition(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
 * (NO OUT OF BOUNDS)
 *
 */
+#[inline(never)]
 fn partition_oob(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
     let pivot = high;
     let mut i = low;
 
     unsafe {
-        let mut ptr = array.as_mut_ptr();
         for j in low..pivot {
             if array.get_unchecked(j) <= array.get_unchecked(pivot) {
                 // array.swap(j, i);
-                // https://doc.rust-lang.org/src/core/slice/mod.rs.html#960
-                // there exists swap_unchecked, but in nightly builds only.
-                // like insertion_sort, we can use raw pointers since that's
-                // the negation of OOB under the hood.
-                // 
-                // This is like array.swap, which calls ptr::swap itself,
-                // but we're ignoring the safety regulation of self[x] and self[y].
-                std::ptr::swap(
-                    ptr.add(i),
-                    ptr.add(j)
-                );
+                array.swap_unchecked(i, j);
                 i+=1;
             }
         }
-        std::ptr::swap(
-            ptr.add(i),
-            ptr.add(pivot)
-        );
+        array.swap_unchecked(i, pivot);
     }
     i
 }
@@ -64,6 +51,7 @@ fn partition_oob(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
 * (RAW POINTERS)
 *
 */
+#[inline(never)]
 fn partition_rp(array: &mut Vec<u32>, low: usize, high: usize) -> usize {
     let pivot = high;
     let mut i = low;

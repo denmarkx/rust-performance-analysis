@@ -41,7 +41,7 @@ fn insertion_sort_oob(array: &mut Vec<u32>) {
             while j > 0 && *array.get_unchecked(j-1) > n {
                 // Obviously we have to end up setting this at one point or another.
                 // ..and we'll use raw pointeers, but the main gist here is all the unchecked calls.
-                *array.get_unchecked_mut(j) = *array.get_unchecked(j-1); // equivalent to array[j] = ...
+                array.swap_unchecked(j, j-1);
                 j-=1;
             }
 
