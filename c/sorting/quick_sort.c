@@ -50,6 +50,6 @@ void sort(int* array, int low, int high) {
 
 void start_quick_sort(int* array, int array_size) {
     benchmark();
-    sort(array, 0, array_size-1);
+    sort(array, 0, array_size);
     end_benchmark();
 }

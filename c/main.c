@@ -40,7 +40,8 @@ int main(int argc, char** argv) {
             args.r_min,
             args.r_max,
             args.n_iter,
-            args.inner_length
+            args.inner_length,
+            &args.seed
         );
     }
 
@@ -55,7 +56,7 @@ int main(int argc, char** argv) {
             // This assumes the parameter types of our func.
             printf("Algorithm: %s\n", args.algorithm);
             for (unsigned int i = 0; i < arr_data.arr_size; i++) {
-                (*router->func)(arr_data.array[i], arr_data.count_arr[i]-1);
+                (*router->func)(arr_data.array[i], arr_data.count_arr[i]);
                 f_got_algorithm  = 1;
             }
         }

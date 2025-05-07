@@ -176,6 +176,7 @@ typedef struct Args {
     int n_iter;
     const char* algorithm;
     unsigned int inner_length;
+    unsigned int seed;
 } Args;
 
 
@@ -186,6 +187,7 @@ static struct option long_options[] = {
     {"n-iter", optional_argument, NULL, 'i'},
     {"algorithm", optional_argument, NULL, 'a'},
     {"inner-length", optional_argument, NULL, 'l'},
+    {"seed", optional_argument, NULL, 's'},
 };
 
 void print_usage() {
@@ -202,6 +204,8 @@ void print_usage() {
     printf("     Algorithms: {insertion, bubble, quick, matrix}\n\n");
     printf("  --inner-length [-l] <unsigned int>\n");
     printf("     The fixed length of all inner arrays. 0 will make it random.\n     Required for Matrix Multiplication.\n");
+    printf("  --seed [-s] <unsigned int>\n");
+    printf("    Seed used by the psuedo random number generator. Uses current time if not given or seed is 0.");
 }
 
 Args parse_args(int argc, char* argv[]) {
@@ -209,6 +213,7 @@ Args parse_args(int argc, char* argv[]) {
     int opt;
 
     if (argc <= 1) {
+        printf ("Please supply at least one of the following arguments:\n");
         print_usage();
         exit(1);
     }
@@ -220,6 +225,7 @@ Args parse_args(int argc, char* argv[]) {
     args.n_iter = 10;
     args.algorithm = "insertion";
     args.inner_length = 0;
+    args.seed = 0;
 
     // Option Router
     while ((opt = getopt_long(argc, argv, "r:m:i:l:a:f:", long_options, NULL)) != -1) {
@@ -241,6 +247,9 @@ Args parse_args(int argc, char* argv[]) {
                 break;
             case 'l':
                 args.inner_length = atoi(optarg);
+                break;
+            case 's':
+                args.seed = atoi(optarg);
                 break;
             default:
                 print_usage();
@@ -269,6 +278,11 @@ Args parse_args(int argc, char* argv[]) {
         exit(1);
     }
 
+    // seed (uint as required by srand)
+    if (args.seed < 0) {
+        fprintf(stderr, "--seed [-s] must be >= 0!\n");
+        exit(1);
+    }
 
     // algorithm and file is done by main.c
     // but we will lower the algorithm:

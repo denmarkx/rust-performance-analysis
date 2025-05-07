@@ -1,22 +1,20 @@
 use rand::Rng;
 
-// TODO: is this used still?
 /*
-// Places random values between a, b for len c.
-fn randomize_array(a : u32, b : u32, c : usize) -> Vec<u32> {
-    let mut rng;
-
-    // Create array:
-    let mut array = Vec::new();
-
-    // // Insert into array:
-    for _i in 0..c {
-    	rng = rand::rng().random_range(a..b+1);
-    	array.push(rng.try_into().unwrap());
-    }
-    array
-}
+* Linear Congruential Generator
+* 
+* Naive implementation for the sole use of providing a seed and having it
+* generate the same values independent of language.
 */
+fn lcg(seed: &mut u32) -> u32 {
+    *seed = seed.wrapping_mul(1664525).wrapping_add(1013904223);
+    *seed
+}
+
+fn lcg_rand_range(seed: &mut u32, min: u32, max: u32) -> u32 {
+    let r = lcg(seed);
+    (r + min) % (max - min) + min
+}
 
 /*
 * Given three parameters, a, b, c, returns a 2D vector of randomized values.
@@ -27,12 +25,19 @@ fn randomize_array(a : u32, b : u32, c : usize) -> Vec<u32> {
 *   [0..random_range(b / 2..=b)].
 *   ..IF inner_length is 0.
 *   ..otherwise, it will use whatever was passed to inner_length
+*
+* if seed > 0, the LCG random num generator is used. Otherwise,
+* the rand::Rng crate is.
 */
-pub fn randomize_array_set(a : u32, b : u32, mut c : usize, inner_length : usize) -> Vec<Vec<u32>> {
+pub fn randomize_array_set(a : u32, b : u32,
+    mut c : usize, inner_length : usize, seed: &mut u32) -> Vec<Vec<u32>> {
     // c will change to inner_length if inner_length is not 0.
     if inner_length != 0 {
         c = inner_length;
     }
+
+    // seed will be changed in-place, so we'll copy the real seed.
+    let o_seed = *seed;
 
     let mut rng;
     let mut length = c;
@@ -42,15 +47,30 @@ pub fn randomize_array_set(a : u32, b : u32, mut c : usize, inner_length : usize
     let mut rng_gen = rand::rng();
 
     // Insert into array:
-    for _i in 0..c {
-        // get random size for vec between a and b.
+    // We separate these to be in parity with C's code.
+    let mut length_vec = vec![0; c];
+    for i in 0..c {
         if inner_length == 0 {
-            length = rng_gen.random_range(b / 2..=b) as usize;
+            if o_seed == 0 {
+                length = rng_gen.random_range(b / 2..=b) as usize;
+            } else {
+                length = lcg_rand_range(seed, b / 2, b) as usize;
+            }
         }
-        let mut vec = vec![0; length];
-        for j in 0..length {
-            rng = rng_gen.random_range(a..b+1);
-            vec[j] = rng.try_into().unwrap();
+        length_vec[i] = length;
+    }
+
+    // Insert into array:
+    for i in 0..c {
+        let arr_length = length_vec[i];
+        let mut vec = vec![0; arr_length];
+        for j in 0..arr_length {
+            if o_seed == 0 {
+                rng = rng_gen.random_range(a..b+1);
+                vec[j] = rng.try_into().unwrap();
+            } else {
+                vec[j] = lcg_rand_range(seed, a, b+1);
+            }
         }
         array.push(vec);
     }

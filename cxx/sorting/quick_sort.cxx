@@ -20,7 +20,7 @@ static inline void swap(int *x, int *y) {
 *
 * Returns index representing pivot.
 */
-int partition(std::vector<int> array, int low, int high) {
+int partition(std::vector<int> &array, int low, int high) {
     int pivot = array[high];
     int i = low-1;
 
@@ -41,7 +41,7 @@ int partition(std::vector<int> array, int low, int high) {
 /*
 * Recursively splits the array until array becomes too small to partition.
 */
-void sort(std::vector<int> array, int low, int high) {
+void sort(std::vector<int> &array, int low, int high) {
     if (low >= high) {
         return;
     }

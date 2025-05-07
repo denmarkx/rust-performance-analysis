@@ -74,7 +74,8 @@ int main(int argc, char* argv[]) {
             args.r_min,
             args.r_max,
             args.n_iter,
-            args.inner_length
+            args.inner_length,
+            &args.seed
         );
     }
 

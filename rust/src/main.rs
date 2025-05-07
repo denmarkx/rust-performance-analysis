@@ -21,6 +21,9 @@ use std::process;
 
 // Argument Parsing:
 use argh::FromArgs;
+use rand::rngs::StdRng;
+use rand::SeedableRng;
+use rand::Rng;
 
 #[derive(FromArgs)]
 /// 
@@ -30,7 +33,7 @@ struct Args {
     file: Option<String>,
 
     /// random range minimum
-    #[argh(option, default = "1")]
+    #[argh(option, default = "0")]
     r_min: u32,
 
     /// random range maximum
@@ -54,6 +57,10 @@ struct Args {
     /// for sorting algorithms, this will OVERRIDE n_iter.
     #[argh(option, default = "0", short = 'l')]
     inner_length : usize,
+
+    /// seed of random number generator. if seed > 0, lcg is used. otherwise, rand::Rng is.
+    #[argh(option, default = "0", short = 's')]
+    seed : u32
 }
 
 fn validate_algorithm(value: &str) -> Result<String, String> {
@@ -92,6 +99,8 @@ fn main() {
     let args : Args = argh::from_env();
     let algorithm: String = args.algorithm;
 
+    let mut seed = args.seed;
+
     // Arrays:
     let mut array: Vec<Vec<u32>> = vec![];
     let mut array2: Vec<Vec<u32>> = vec![];
@@ -99,7 +108,7 @@ fn main() {
     // Check if we're from a file.
     if args.file.is_none() {
         // Matrix Multiplication requires another array.
-        array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length);
+        array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length, &mut seed);
 
         if algorithm == "matrix" {
             // Let's make use args.inner_length is NOT 0.
@@ -108,8 +117,8 @@ fn main() {
                 process::exit(1);
             }
 
-            array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length);
-            array2 = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length);
+            array = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length, &mut seed);
+            array2 = random_value::randomize_array_set(args.r_min, args.r_max, args.n_iter, args.inner_length, &mut seed);
         }
 
     } else {
