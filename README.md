@@ -31,8 +31,8 @@ ___
 Rust will accept all the arguments above along with extras:
 - **`--algorithm` (Required)**
   - <_insertion, bubble, quick, sum_>
-- **`--unsafe-type**: Runs a specified unsafe version of the algorithm.
-  - <_oob_, _rptr>
+- **`--unsafe-type`**: Runs a specified unsafe version of the algorithm.
+  - <_oob_, _rptr_>
   - <_vectorization_>: if the algorithm is `sum`.
 
 Rust will accept arguments in the form of `--seed 5`. C and C++ require a `=` character separating the key and value: `--seed=5`.
